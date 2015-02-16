@@ -85,8 +85,5 @@ public class Master {
 	}
 
 
-	public void del(char state, char symbol) {
-
-	}
 
 }

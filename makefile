@@ -7,15 +7,15 @@ FILE=
 	$(JC) $(JFLAGS) $*.java
 
 CLASSES = \
-	CTree.java \
-	Delta.java \
-	DFA.java \
-	Handler.java \
-	Head.java \
+	# CTree.java \
+	# Delta.java \
+	# DFA.java \
+	# Handler.java \
+	# Head.java \
 	Master.java \
-	NFA.java \
-	TM.java \
-	Tree.java
+	# NFA.java \
+	# TM.java \
+	# Tree.java
 	
 	
 

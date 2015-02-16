@@ -30,11 +30,15 @@ public class CTree {
 	public ArrayList<Character> getForefrontWave() {
 		return forefrontToState();
 	}
+	
 	protected ArrayList<Character> forefrontToState() {
 		ArrayList<Character> wave = new ArrayList<Character>();
+		System.out.println("\nForefront states are: ");
 		for (Node q : forefront) {
+			System.out.print(q.getState() + " ");
 			wave.add(q.getState());
 		}
+		System.out.println("\n");
 		return wave;
 	}
 	// call from the final expansion??
