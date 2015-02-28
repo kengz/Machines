@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>Tree.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+      <ul id="jump_to">
+        <li>
+          <a class="large" href="javascript:void(0);">Jump To &hellip;</a>
+          <a class="small" href="javascript:void(0);">+</a>
+          <div id="jump_wrapper">
+          <div id="jump_page_wrapper">
+            <div id="jump_page">
+              
+                
+                <a class="source" href="Tree.html">
+                  Tree.js
+                </a>
+              
+                
+                <a class="source" href="machine.html">
+                  machine.js
+                </a>
+              
+            </div>
+          </div>
+        </li>
+      </ul>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>Tree.js</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              <p>The Tree class for parallel machine computation. Used to create the computation history (configurations) of the machine.</p>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p>Import the delta from machine</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> delta = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./machine.js'</span>);
+<span class="hljs-keyword">var</span> nd = delta.nd;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <p>The Node class constructor for Tree</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">Node</span><span class="hljs-params">(state, symbol)</span> </span>{
+	<span class="hljs-keyword">this</span>.state = state,
+	<span class="hljs-keyword">this</span>.symbol = symbol,
+	<span class="hljs-keyword">this</span>.Parent = <span class="hljs-literal">null</span>,
+	<span class="hljs-keyword">this</span>.depth = <span class="hljs-number">0</span>,
+	<span class="hljs-keyword">this</span>.epsilon = <span class="hljs-literal">false</span>,
+	<span class="hljs-keyword">this</span>.children = []
+}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <p>Return the size of the tree under this node</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Node.prototype.sizeOf = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+	<span class="hljs-keyword">var</span> s = _.size(<span class="hljs-keyword">this</span>.children);
+	_.each(<span class="hljs-keyword">this</span>.children, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span></span>{ s += sizeOf();} );
+	<span class="hljs-keyword">return</span> s;
+}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <p>Check if this node is a leaf</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Node.prototype.isLeaf = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+	<span class="hljs-keyword">return</span> !((<span class="hljs-keyword">this</span>.children.length) &gt; <span class="hljs-number">0</span>);
+}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <p>Indentation for printing out the tree depth</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Node.prototype.indent = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+	<span class="hljs-keyword">var</span> count = <span class="hljs-keyword">this</span>.depth;
+	<span class="hljs-keyword">while</span> (count &gt; <span class="hljs-number">0</span>) {
+		count--;
+		process.stdout.write(<span class="hljs-string">"  "</span>);
+	}
+}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-7">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
+              <p>Print an input and its resulting state</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Node.prototype.printHere = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+	<span class="hljs-keyword">this</span>.indent();
+	<span class="hljs-built_in">console</span>.log(<span class="hljs-keyword">this</span>.symbol + <span class="hljs-string">"&gt;"</span>);
+	<span class="hljs-keyword">this</span>.indent();
+	<span class="hljs-built_in">console</span>.log(<span class="hljs-keyword">this</span>.state);
+}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-8">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-8">&#182;</a>
+              </div>
+              <p>Print the tree breadth-first</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Node.prototype.preOrder = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+	<span class="hljs-keyword">this</span>.printHere();
+	<span class="hljs-keyword">if</span> (!(<span class="hljs-keyword">this</span>.isLeaf())) {
+		<span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-keyword">this</span>.children.length; i++) {
+			<span class="hljs-keyword">this</span>.children[i].preOrder();
+		}
+	}
+}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-9">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-9">&#182;</a>
+              </div>
+              <p>Set the parent of this node (Epsilon nodes’ parents are its sibling)</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Node.prototype.setParent = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(Parent)</span> </span>{
+	<span class="hljs-keyword">this</span>.Parent = Parent;
+	<span class="hljs-keyword">this</span>.depth = Parent.depth + <span class="hljs-number">1</span>;
+}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-10">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-10">&#182;</a>
+              </div>
+              <p>Add a child to this node due to an input</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Node.prototype.addChild = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(state, symbol)</span> </span>{
+	<span class="hljs-keyword">if</span> (state == <span class="hljs-string">'oe'</span>) { <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>; }
+	<span class="hljs-keyword">else</span> {
+		<span class="hljs-keyword">var</span> child = <span class="hljs-keyword">new</span> Node(state, symbol);
+		child.setParent(<span class="hljs-keyword">this</span>);
+		<span class="hljs-keyword">this</span>.children.push(child);
+		<span class="hljs-keyword">return</span> child;
+	}
+}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-11">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-11">&#182;</a>
+              </div>
+              <p>Node.prototype.addSibling = function(state) {
+    if (state == “oe”) { return null; }
+    else {
+        var par = this.Parent;
+        var sib = par.addChild(state, “/“);
+        sib.setParent(this);
+        sib.skip();
+        return sib;
+    }
+}
+Label a node as an epsilon node</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Node.prototype.skip = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{ <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.epsilon = <span class="hljs-literal">true</span>; }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-12">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-12">&#182;</a>
+              </div>
+              <p>The Tree class constructor</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">Tree</span><span class="hljs-params">(state)</span> </span>{
+	<span class="hljs-keyword">this</span>.root = <span class="hljs-keyword">new</span> Node(state, <span class="hljs-string">"/"</span>),
+	<span class="hljs-keyword">this</span>.treeDepth = <span class="hljs-number">0</span>,
+	forefront = []
+}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-13">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-13">&#182;</a>
+              </div>
+              <p>Print the tree</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Tree.prototype.printTree = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+	<span class="hljs-keyword">this</span>.root.preOrder();
+}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-14">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-14">&#182;</a>
+              </div>
+              <p>Compute the next step</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Tree.prototype.nextStep = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(symbol)</span> </span>{
+	<span class="hljs-keyword">this</span>.forefront = [];
+	<span class="hljs-keyword">this</span>.expand(symbol, <span class="hljs-keyword">this</span>.root);
+	<span class="hljs-keyword">this</span>.treeDepth++;
+	<span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.forefront;
+}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-15">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-15">&#182;</a>
+              </div>
+              <p>Expand the tree: continue to compute, add children and epsilon children, until the end of computation</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Tree.prototype.expand = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(symbol, root)</span> </span>{
+	<span class="hljs-keyword">if</span> (root.depth === <span class="hljs-keyword">this</span>.treeDepth) {
+		<span class="hljs-keyword">var</span> q = root.state;
+		<span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; nd(q, symbol).length; i++) {
+			<span class="hljs-keyword">var</span> c = nd(q, symbol, i);
+			<span class="hljs-keyword">var</span> child = root.addChild(c, symbol);
+			<span class="hljs-keyword">if</span> (child != <span class="hljs-literal">null</span>) {
+				<span class="hljs-keyword">this</span>.forefront.push(child.state);
+				<span class="hljs-keyword">this</span>.expandEChild(child);
+			}
+		}
+	} 
+	<span class="hljs-keyword">else</span> {
+		<span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; root.children.length; i++) {
+			<span class="hljs-keyword">this</span>.expand(symbol, root.children[i]);
+		}
+	}
+}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-16">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-16">&#182;</a>
+              </div>
+              <p>Expand the epsilon parallel branch: Add epsilon children</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Tree.prototype.expandEChild = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(child)</span> </span>{
+	<span class="hljs-keyword">var</span> root = child.Parent;
+	<span class="hljs-keyword">var</span> q = child.state;
+	<span class="hljs-keyword">if</span> (! (nd(q, <span class="hljs-string">"/"</span>) == <span class="hljs-string">'oe'</span>)) {
+		<span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; nd(q, <span class="hljs-string">"/"</span>).length; i++) {
+			<span class="hljs-keyword">var</span> c = nd(q, <span class="hljs-string">"/"</span>, i);
+			<span class="hljs-keyword">var</span> eChild = root.addChild(c, <span class="hljs-string">"/"</span>);
+			<span class="hljs-keyword">this</span>.forefront.push(eChild.state);
+			<span class="hljs-keyword">this</span>.expandEChild(eChild);
+		}
+	}
+}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-17">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-17">&#182;</a>
+              </div>
+              <p>Print all states resulting from the last computation step</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Tree.prototype.printForefront = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+	<span class="hljs-built_in">console</span>.log(<span class="hljs-string">"Printing forefront states"</span>);
+	<span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-keyword">this</span>.forefront.length; i++) {
+		<span class="hljs-built_in">console</span>.log(<span class="hljs-keyword">this</span>.forefront[i].state);
+	}
+}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-18">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-18">&#182;</a>
+              </div>
+              <p>Export the Tree module</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>exports.Tree = Tree;</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>
