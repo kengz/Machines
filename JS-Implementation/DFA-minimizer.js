@@ -86,12 +86,6 @@ var part = function() {
 };
 
 
-// the main function, runs all functions above
-part();
-console.log(partition);
-
-
-
 
 ///////////////////////////////////
 // Construction of Minimized DFA //
@@ -103,10 +97,10 @@ var defM = machine.defM;
 
 // construct a new minimized DFA by changing a copy of defM and saving it
 var constructMinDFA = function() {
-	// for each partition block,
+    // for each partition block,
     _.each(partition, function(p) {
         for (var i = 1; i < p.length; i++) {
-        	// remove all the redundant states
+            // remove all the redundant states
             defM.Q = _.without(defM.Q, p[i]);
             defM.F = _.without(defM.F, p[i]);
             defM.delta = _.omit(defM.delta, p[i]);
@@ -142,11 +136,17 @@ var constructMinDFA = function() {
 
 
 
+
+// the main function, runs all functions above
+part();
+console.log("The partitioned states are: ");
+console.log(partition);
+
 // the main function, run all above
 constructMinDFA();
 
-// var outFile = './Definitions/minDFA.json';
-var outFile = './Definitions/minDFA_4_4_2.json';
+var outFile = './Definitions/minDFA.json';
+// var outFile = './Definitions/minDFA_4_4_2.json';
 // var outFile = './Definitions/minDFA_3_2_1.json';
 var fs = require('fs');
 fs.writeFile(outFile, JSON.stringify(defM, null, 4), function(err) {

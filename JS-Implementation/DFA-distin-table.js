@@ -32,36 +32,36 @@ var Fc = _.difference(Q, F);
 // Initialize table of distinguishabilities, set all 0
 var distinTable = {};
 for (var i = 0; i < Q.length - 1; i++) {
-	for (var j = i + 1; j < Q.length; j++) {
-		distinTable[
+    for (var j = i + 1; j < Q.length; j++) {
+        distinTable[
             // order lexicographically
             _.sortBy([Q[i], Q[j]])
-            ] = 0;
-        }
+        ] = 0;
     }
+}
 
 // The internal function of algorithm, check if resultant pair of states on input symbol is distinguishable
 var isDistin = function(state1, state2, symbol) {
-	if (distinTable[[
-		_.sortBy([d(state1, symbol), d(state2, symbol)])
-		]] === 1) {
+    if (distinTable[[
+            _.sortBy([d(state1, symbol), d(state2, symbol)])
+        ]] === 1) {
         // console.log("marked");
-    return true;
-}
+        return true;
+    }
 };
 
 // run the algorithm function above on setP
 var findDistin = function(P) {
     // take subset pair
     for (var i = 0; i < P.length - 1; i++) {
-    	for (var j = i + 1; j < P.length; j++) {
+        for (var j = i + 1; j < P.length; j++) {
             // for each input symbol
             _.each(S, function(s) {
                 // see the the mapped pair is distinguishable
                 if (isDistin(P[i], P[j], s)) {
-                	distinTable[
-                	_.sortBy([P[i], P[j]])
-                	] = 1;
+                    distinTable[
+                        _.sortBy([P[i], P[j]])
+                    ] = 1;
                 }
             });
         }
@@ -69,14 +69,14 @@ var findDistin = function(P) {
 };
 // run the algorithm
 var runAlgo = function() {
-	console.log("Table of distin:");
+    console.log("Table of distin:");
     // set all the initial distinct pairs Fc x F to map, value = 1
     _.each(Fc, function(c) {
-    	_.each(F, function(f) {
-    		distinTable[
-    		_.sortBy([c, f])
-    		] = 1;
-    	});
+        _.each(F, function(f) {
+            distinTable[
+                _.sortBy([c, f])
+            ] = 1;
+        });
     });
     // run for each pair in partitions F, Fc
     findDistin(F);
@@ -86,17 +86,17 @@ var runAlgo = function() {
 
 // The indent function for printTable()
 var indent = function(i) {
-	while (i > 0) {
-		i--;
-		process.stdout.write("  ");
-	}
-}
+        while (i > 0) {
+            i--;
+            process.stdout.write("  ");
+        }
+    }
     // the function to print the distinTable
-    var printTable = function() {
+var printTable = function() {
     // print the horizontal axis
     indent(1);
     for (var j = 1; j < Q.length; j++) {
-    	process.stdout.write(Q[j] + " ");
+        process.stdout.write(Q[j] + " ");
     }
     console.log();
 
@@ -107,14 +107,16 @@ var indent = function(i) {
         indent(i);
         // print a row from distinTable
         for (var j = i + 1; j < Q.length; j++) {
-        	process.stdout.write(distinTable[
-        		_.sortBy([Q[i], Q[j]])
-        		] + " ");
+            process.stdout.write(distinTable[
+                _.sortBy([Q[i], Q[j]])
+            ] + " ");
         }
         console.log();
     }
+    console.log();
 
 };
+
 
 
 // the main function, run all above

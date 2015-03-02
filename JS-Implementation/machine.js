@@ -45,8 +45,8 @@ delta = {
         1: ["a", "b"]
     },
     b: {
-    	0: ["c"],
-    	"/": ["c"]
+        0: ["c"],
+        "/": ["c"]
     }
 };
 
@@ -68,19 +68,19 @@ var nd = function(q, s, index) {
     var arr = delta[q][s];
     // if empty (dead state), return empty set "oe"
     if (arr == undefined)
-    	return "oe";
+        return "oe";
     // if without index, return whole set(array)
     else if (index == undefined)
-    	return arr;
+        return arr;
     // with index, return specific entry(undefined if invalid index)
     else
-    	return arr[index];
+        return arr[index];
 };
 
 // Deterministic delta function, return outputs to input(q,s)
 // Is a restriction of nd() - nondeterministic delta.
 var d = function(q, s) {
-	return nd(q, s, 0);
+    return nd(q, s, 0);
 };
 
 
@@ -104,34 +104,34 @@ var m1;
 
 // function to compute one input
 var compute = function(i) {
-	// init new tree
-	m1 = new t.Tree(q0);
-	console.log("Tape: " + input[i]);
-	console.log("Machine computing:");
-	console.log("===================");
-	// Compute with the tape
-	for (var j = 0; j < input[i].length; j++) {
-		m1.nextStep(input[i][j]);
-	}
-	m1.printTree();
+    // init new tree
+    m1 = new t.Tree(q0);
+    console.log("Tape: " + input[i]);
+    console.log("Machine computing:");
+    console.log("===================");
+    // Compute with the tape
+    for (var j = 0; j < input[i].length; j++) {
+        m1.nextStep(input[i][j]);
+    }
+    m1.printTree();
 
-	// Check for accept states in the lowest level of tree = forefront
-	var accepts = _.intersection(m1.forefront, F);
-	if (accepts.length > 0 ) {
-		console.log("Forefront: " + _.uniq(m1.forefront));
-		console.log("Accepted states: " + accepts);
-		console.log("======Accept.======\n");
-	} else {
-		console.log("======Reject.======\n");
-	}
+    // Check for accept states in the lowest level of tree = forefront
+    var accepts = _.intersection(m1.forefront, F);
+    if (accepts.length > 0) {
+        console.log("Forefront: " + _.uniq(m1.forefront));
+        console.log("Accepted states: " + accepts);
+        console.log("======Accept.======\n");
+    } else {
+        console.log("======Reject.======\n");
+    }
 
 };
 
 // Compute all input strings
 var computeAll = function() {
-	for (var i = 0; i < input.length; i++) {
-		compute(i);
-	};
+    for (var i = 0; i < input.length; i++) {
+        compute(i);
+    };
 };
 
 
@@ -141,8 +141,3 @@ var computeAll = function() {
 //////////////////////////////////////////////
 
 computeAll();
-
-
-
-
-

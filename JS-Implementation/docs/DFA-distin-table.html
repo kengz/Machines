@@ -164,8 +164,8 @@ console.log(F);</p>
             
             <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> distinTable = {};
 <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; Q.length - <span class="hljs-number">1</span>; i++) {
-	<span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> j = i + <span class="hljs-number">1</span>; j &lt; Q.length; j++) {
-		distinTable[</pre></div></div>
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> j = i + <span class="hljs-number">1</span>; j &lt; Q.length; j++) {
+        distinTable[</pre></div></div>
             
         </li>
         
@@ -181,9 +181,9 @@ console.log(F);</p>
             </div>
             
             <div class="content"><div class='highlight'><pre>            _.sortBy([Q[i], Q[j]])
-            ] = <span class="hljs-number">0</span>;
-        }
-    }</pre></div></div>
+        ] = <span class="hljs-number">0</span>;
+    }
+}</pre></div></div>
             
         </li>
         
@@ -199,9 +199,9 @@ console.log(F);</p>
             </div>
             
             <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> isDistin = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(state1, state2, symbol)</span> </span>{
-	<span class="hljs-keyword">if</span> (distinTable[[
-		_.sortBy([d(state1, symbol), d(state2, symbol)])
-		]] === <span class="hljs-number">1</span>) {</pre></div></div>
+    <span class="hljs-keyword">if</span> (distinTable[[
+            _.sortBy([d(state1, symbol), d(state2, symbol)])
+        ]] === <span class="hljs-number">1</span>) {</pre></div></div>
             
         </li>
         
@@ -216,8 +216,8 @@ console.log(F);</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
-}
+            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+    }
 };</pre></div></div>
             
         </li>
@@ -249,7 +249,7 @@ console.log(F);</p>
             </div>
             
             <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; P.length - <span class="hljs-number">1</span>; i++) {
-    	<span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> j = i + <span class="hljs-number">1</span>; j &lt; P.length; j++) {</pre></div></div>
+        <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> j = i + <span class="hljs-number">1</span>; j &lt; P.length; j++) {</pre></div></div>
             
         </li>
         
@@ -280,9 +280,9 @@ console.log(F);</p>
             </div>
             
             <div class="content"><div class='highlight'><pre>                <span class="hljs-keyword">if</span> (isDistin(P[i], P[j], s)) {
-                	distinTable[
-                	_.sortBy([P[i], P[j]])
-                	] = <span class="hljs-number">1</span>;
+                    distinTable[
+                        _.sortBy([P[i], P[j]])
+                    ] = <span class="hljs-number">1</span>;
                 }
             });
         }
@@ -303,7 +303,7 @@ console.log(F);</p>
             </div>
             
             <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> runAlgo = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
-	<span class="hljs-built_in">console</span>.log(<span class="hljs-string">"Table of distin:"</span>);</pre></div></div>
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"Table of distin:"</span>);</pre></div></div>
             
         </li>
         
@@ -319,11 +319,11 @@ console.log(F);</p>
             </div>
             
             <div class="content"><div class='highlight'><pre>    _.each(Fc, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(c)</span> </span>{
-    	_.each(F, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(f)</span> </span>{
-    		distinTable[
-    		_.sortBy([c, f])
-    		] = <span class="hljs-number">1</span>;
-    	});
+        _.each(F, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(f)</span> </span>{
+            distinTable[
+                _.sortBy([c, f])
+            ] = <span class="hljs-number">1</span>;
+        });
     });</pre></div></div>
             
         </li>
@@ -357,11 +357,11 @@ console.log(F);</p>
             </div>
             
             <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> indent = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(i)</span> </span>{
-	<span class="hljs-keyword">while</span> (i &gt; <span class="hljs-number">0</span>) {
-		i--;
-		process.stdout.write(<span class="hljs-string">"  "</span>);
-	}
-}</pre></div></div>
+        <span class="hljs-keyword">while</span> (i &gt; <span class="hljs-number">0</span>) {
+            i--;
+            process.stdout.write(<span class="hljs-string">"  "</span>);
+        }
+    }</pre></div></div>
             
         </li>
         
@@ -376,7 +376,7 @@ console.log(F);</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">var</span> printTable = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{</pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> printTable = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{</pre></div></div>
             
         </li>
         
@@ -393,7 +393,7 @@ console.log(F);</p>
             
             <div class="content"><div class='highlight'><pre>    indent(<span class="hljs-number">1</span>);
     <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> j = <span class="hljs-number">1</span>; j &lt; Q.length; j++) {
-    	process.stdout.write(Q[j] + <span class="hljs-string">" "</span>);
+        process.stdout.write(Q[j] + <span class="hljs-string">" "</span>);
     }
     <span class="hljs-built_in">console</span>.log();
 
@@ -443,12 +443,13 @@ console.log(F);</p>
             </div>
             
             <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> j = i + <span class="hljs-number">1</span>; j &lt; Q.length; j++) {
-        	process.stdout.write(distinTable[
-        		_.sortBy([Q[i], Q[j]])
-        		] + <span class="hljs-string">" "</span>);
+            process.stdout.write(distinTable[
+                _.sortBy([Q[i], Q[j]])
+            ] + <span class="hljs-string">" "</span>);
         }
         <span class="hljs-built_in">console</span>.log();
     }
+    <span class="hljs-built_in">console</span>.log();
 
 };</pre></div></div>
             

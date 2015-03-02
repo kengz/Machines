@@ -205,8 +205,8 @@ Keys that map to empty set are not recorded; see nd() output.</p>
         <span class="hljs-number">1</span>: [<span class="hljs-string">"a"</span>, <span class="hljs-string">"b"</span>]
     },
     b: {
-    	<span class="hljs-number">0</span>: [<span class="hljs-string">"c"</span>],
-    	<span class="hljs-string">"/"</span>: [<span class="hljs-string">"c"</span>]
+        <span class="hljs-number">0</span>: [<span class="hljs-string">"c"</span>],
+        <span class="hljs-string">"/"</span>: [<span class="hljs-string">"c"</span>]
     }
 };</pre></div></div>
             
@@ -330,7 +330,7 @@ Return: “oe” for empty set(dead state)</p>
             </div>
             
             <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">if</span> (arr == <span class="hljs-literal">undefined</span>)
-    	<span class="hljs-keyword">return</span> <span class="hljs-string">"oe"</span>;</pre></div></div>
+        <span class="hljs-keyword">return</span> <span class="hljs-string">"oe"</span>;</pre></div></div>
             
         </li>
         
@@ -346,7 +346,7 @@ Return: “oe” for empty set(dead state)</p>
             </div>
             
             <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (index == <span class="hljs-literal">undefined</span>)
-    	<span class="hljs-keyword">return</span> arr;</pre></div></div>
+        <span class="hljs-keyword">return</span> arr;</pre></div></div>
             
         </li>
         
@@ -362,7 +362,7 @@ Return: “oe” for empty set(dead state)</p>
             </div>
             
             <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">else</span>
-    	<span class="hljs-keyword">return</span> arr[index];
+        <span class="hljs-keyword">return</span> arr[index];
 };</pre></div></div>
             
         </li>
@@ -380,7 +380,7 @@ Is a restriction of nd() - nondeterministic delta.</p>
             </div>
             
             <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> d = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(q, s)</span> </span>{
-	<span class="hljs-keyword">return</span> nd(q, s, <span class="hljs-number">0</span>);
+    <span class="hljs-keyword">return</span> nd(q, s, <span class="hljs-number">0</span>);
 };</pre></div></div>
             
         </li>
@@ -502,10 +502,10 @@ Machine computation //
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>	m1 = <span class="hljs-keyword">new</span> t.Tree(q0);
-	<span class="hljs-built_in">console</span>.log(<span class="hljs-string">"Tape: "</span> + input[i]);
-	<span class="hljs-built_in">console</span>.log(<span class="hljs-string">"Machine computing:"</span>);
-	<span class="hljs-built_in">console</span>.log(<span class="hljs-string">"==================="</span>);</pre></div></div>
+            <div class="content"><div class='highlight'><pre>    m1 = <span class="hljs-keyword">new</span> t.Tree(q0);
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"Tape: "</span> + input[i]);
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"Machine computing:"</span>);
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"==================="</span>);</pre></div></div>
             
         </li>
         
@@ -520,10 +520,10 @@ Machine computation //
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>	<span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> j = <span class="hljs-number">0</span>; j &lt; input[i].length; j++) {
-		m1.nextStep(input[i][j]);
-	}
-	m1.printTree();</pre></div></div>
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> j = <span class="hljs-number">0</span>; j &lt; input[i].length; j++) {
+        m1.nextStep(input[i][j]);
+    }
+    m1.printTree();</pre></div></div>
             
         </li>
         
@@ -538,14 +538,14 @@ Machine computation //
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>	<span class="hljs-keyword">var</span> accepts = _.intersection(m1.forefront, F);
-	<span class="hljs-keyword">if</span> (accepts.length &gt; <span class="hljs-number">0</span> ) {
-		<span class="hljs-built_in">console</span>.log(<span class="hljs-string">"Forefront: "</span> + _.uniq(m1.forefront));
-		<span class="hljs-built_in">console</span>.log(<span class="hljs-string">"Accepted states: "</span> + accepts);
-		<span class="hljs-built_in">console</span>.log(<span class="hljs-string">"======Accept.======\n"</span>);
-	} <span class="hljs-keyword">else</span> {
-		<span class="hljs-built_in">console</span>.log(<span class="hljs-string">"======Reject.======\n"</span>);
-	}
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">var</span> accepts = _.intersection(m1.forefront, F);
+    <span class="hljs-keyword">if</span> (accepts.length &gt; <span class="hljs-number">0</span>) {
+        <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"Forefront: "</span> + _.uniq(m1.forefront));
+        <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"Accepted states: "</span> + accepts);
+        <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"======Accept.======\n"</span>);
+    } <span class="hljs-keyword">else</span> {
+        <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"======Reject.======\n"</span>);
+    }
 
 };</pre></div></div>
             
@@ -563,9 +563,9 @@ Machine computation //
             </div>
             
             <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> computeAll = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
-	<span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; input.length; i++) {
-		compute(i);
-	};
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; input.length; i++) {
+        compute(i);
+    };
 };</pre></div></div>
             
         </li>
