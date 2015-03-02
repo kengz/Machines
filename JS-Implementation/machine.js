@@ -1,11 +1,35 @@
+// The class for constructing machines:
+// Note all other classes depend on the machine definitions here, which is instructed by the 'require()' method.
+// Designed to be a restriction of Turing Machine, thus capable of constructing DFA, NFA, e-NFA, PDA, and TM.
+// Currently the explicit construction is up to e-NFA, the machine head (which gives Turing-ness) is to be written in the Tree.js soon, with appropriate modifications
+
 
 // import underscore.js for set/list manipulation
 var _ = require("underscore");
+// Import machine definitions from JSON, including inputs at the last.
+// A sample DFA:
+// var defM = require('./Definitions/machine_def.json');
+// For DFA minimization algorithm:
+// var defM = require('./Definitions/DFAtoMin1.json');
+// var defM = require('./Definitions/DFAtoMin2.json');
+// ex 4.4.1
+// var defM = require('./Definitions/DFAtoMin3.json');
+// ex 4.4.2
+var defM = require('./Definitions/DFAtoMin4.json');
+// var defM = require('./Definitions/minDFA.json');
+
+
+////////////////////////
+// Machine Definition //
+////////////////////////
+
+// declare the tuples in machine definition
+var Q, S, F, q0, delta;
 
 // A sample delta table format; will be imported from a JSON file
 // A map from input pair-key (Q, S); to array of outputs values
 // Keys that map to empty set are not recorded; see nd() output.
-var delta = {
+delta = {
     // an input state
     a: {
         // an input symbol, yields general array of outputs
@@ -16,16 +40,7 @@ var delta = {
     	0: ["c"],
     	"/": ["c"]
     }
-}
-
-////////////////////////
-// Machine Definition //
-////////////////////////
-
-// Import machine definition from JSON
-var defM = require('./machine_def.json');
-// declare the tuples in machine definition
-var Q, S, F, q0, delta;
+};
 
 // The states
 Q = defM.Q;
@@ -52,20 +67,20 @@ var nd = function(q, s, index) {
     // with index, return specific entry(undefined if invalid index)
     else
     	return arr[index];
-}
+};
 
 // Deterministic delta function, return outputs to input(q,s)
 // Is a restriction of nd() - nondeterministic delta.
 var d = function(q, s) {
-	nd(q, s, 0);
-}
+	return nd(q, s, 0);
+};
 
 
-// Export the delta function to be used by tree
+// Export the nd for Tree, then import Tree below to compute
 exports.nd = nd;
-
-
-
+exports.d = d;
+// Export the machine for usage elsewhere
+exports.defM = defM;
 
 
 /////////////////////////
@@ -73,7 +88,7 @@ exports.nd = nd;
 /////////////////////////
 
 // Import the tape inputs
-var input = require('./input.json').strings;
+var input = defM.inputs;
 // Import the Tree
 var t = require('./Tree.js');
 // Construct a tree with the start state of machine
@@ -112,8 +127,14 @@ var computeAll = function() {
 };
 
 
-// Run machine to compute all inputs
+//////////////////////////////////////////////
+// The main call to run all functions above //
+// Construct and run machine on all inputs  //
+//////////////////////////////////////////////
+
 computeAll();
+
+
 
 
 
