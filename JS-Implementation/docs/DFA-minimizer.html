@@ -564,7 +564,6 @@ Construction of Minimized DFA //
             
             <div class="content"><div class='highlight'><pre>            defM.Q = _.without(defM.Q, p[i]);
             defM.F = _.without(defM.F, p[i]);
-            defM.q0 = _.without(defM.F, p[i]);
             defM.delta = _.omit(defM.delta, p[i]);</pre></div></div>
             
         </li>
@@ -711,10 +710,37 @@ Construction of Minimized DFA //
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>constructMinDFA();
+            <div class="content"><div class='highlight'><pre>constructMinDFA();</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-43">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-43">&#182;</a>
+              </div>
+              <p>var outFile = ‘./Definitions/minDFA.json’;</p>
 
-<span class="hljs-keyword">var</span> outFile = <span class="hljs-string">'./Definitions/minDFA.json'</span>;
-<span class="hljs-keyword">var</span> fs = <span class="hljs-built_in">require</span>(<span class="hljs-string">'fs'</span>);
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> outFile = <span class="hljs-string">'./Definitions/minDFA_4_4_2.json'</span>;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-44">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-44">&#182;</a>
+              </div>
+              <p>var outFile = ‘./Definitions/minDFA_3_2_1.json’;</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> fs = <span class="hljs-built_in">require</span>(<span class="hljs-string">'fs'</span>);
 fs.writeFile(outFile, <span class="hljs-built_in">JSON</span>.stringify(defM, <span class="hljs-literal">null</span>, <span class="hljs-number">4</span>), <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(err)</span> </span>{
     <span class="hljs-keyword">if</span> (err) {
         <span class="hljs-built_in">console</span>.log(err);
