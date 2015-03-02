@@ -20,6 +20,16 @@
             <div id="jump_page">
               
                 
+                <a class="source" href="DFA-distin-table.html">
+                  DFA-distin-table.js
+                </a>
+              
+                
+                <a class="source" href="DFA-minimizer.html">
+                  DFA-minimizer.js
+                </a>
+              
+                
                 <a class="source" href="Tree.html">
                   Tree.js
                 </a>
@@ -50,7 +60,11 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-1">&#182;</a>
               </div>
-              
+              <p>The class for constructing machines:
+Note all other classes depend on the machine definitions here, which is instructed by the ‘require()’ method.
+Designed to be a restriction of Turing Machine, thus capable of constructing DFA, NFA, e-NFA, PDA, and TM.
+Currently the explicit construction is up to e-NFA, the machine head (which gives Turing-ness) is to be written in the Tree.js soon, with appropriate modifications</p>
+
             </div>
             
         </li>
@@ -77,13 +91,19 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-3">&#182;</a>
               </div>
-              <p>A sample delta table format; will be imported from a JSON file
-A map from input pair-key (Q, S); to array of outputs values
-Keys that map to empty set are not recorded; see nd() output.</p>
+              <p>Import machine definitions from JSON, including inputs at the last.
+A sample DFA:
+var defM = require(‘./Definitions/machine_def.json’);
+For DFA minimization algorithm:
+var defM = require(‘./Definitions/DFAtoMin1.json’);
+var defM = require(‘./Definitions/DFAtoMin2.json’);
+ex 4.4.1
+var defM = require(‘./Definitions/DFAtoMin3.json’);
+ex 4.4.2</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> delta = {</pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> defM = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./Definitions/DFAtoMin4.json'</span>);</pre></div></div>
             
         </li>
         
@@ -94,11 +114,9 @@ Keys that map to empty set are not recorded; see nd() output.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-4">&#182;</a>
               </div>
-              <p>an input state</p>
+              <p>var defM = require(‘./Definitions/minDFA.json’);</p>
 
             </div>
-            
-            <div class="content"><div class='highlight'><pre>    a: {</pre></div></div>
             
         </li>
         
@@ -108,6 +126,68 @@ Keys that map to empty set are not recorded; see nd() output.</p>
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <p>//////////////////////
+Machine Definition //
+//////////////////////</p>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <p>declare the tuples in machine definition</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> Q, S, F, q0, delta;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-7">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
+              <p>A sample delta table format; will be imported from a JSON file
+A map from input pair-key (Q, S); to array of outputs values
+Keys that map to empty set are not recorded; see nd() output.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>delta = {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-8">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-8">&#182;</a>
+              </div>
+              <p>an input state</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    a: {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-9">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-9">&#182;</a>
               </div>
               <p>an input symbol, yields general array of outputs</p>
 
@@ -120,67 +200,7 @@ Keys that map to empty set are not recorded; see nd() output.</p>
     	<span class="hljs-number">0</span>: [<span class="hljs-string">"c"</span>],
     	<span class="hljs-string">"/"</span>: [<span class="hljs-string">"c"</span>]
     }
-}</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-6">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-6">&#182;</a>
-              </div>
-              <p>//////////////////////
-Machine Definition //
-//////////////////////</p>
-
-            </div>
-            
-        </li>
-        
-        
-        <li id="section-7">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-7">&#182;</a>
-              </div>
-              <p>Import machine definition from JSON</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> defM = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./machine_def.json'</span>);</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-8">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-8">&#182;</a>
-              </div>
-              <p>declare the tuples in machine definition</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> Q, S, F, q0, delta;</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-9">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-9">&#182;</a>
-              </div>
-              <p>The states</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>Q = defM.Q;</pre></div></div>
+};</pre></div></div>
             
         </li>
         
@@ -191,11 +211,11 @@ Machine Definition //
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-10">&#182;</a>
               </div>
-              <p>The alphabet, union with epsilon symbol “/“</p>
+              <p>The states</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>S = _.union(defM.S, [<span class="hljs-string">"/"</span>]);</pre></div></div>
+            <div class="content"><div class='highlight'><pre>Q = defM.Q;</pre></div></div>
             
         </li>
         
@@ -206,11 +226,11 @@ Machine Definition //
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-11">&#182;</a>
               </div>
-              <p>The accept states</p>
+              <p>The alphabet, union with epsilon symbol “/“</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>F = defM.F;</pre></div></div>
+            <div class="content"><div class='highlight'><pre>S = _.union(defM.S, [<span class="hljs-string">"/"</span>]);</pre></div></div>
             
         </li>
         
@@ -221,11 +241,11 @@ Machine Definition //
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-12">&#182;</a>
               </div>
-              <p>The start state</p>
+              <p>The accept states</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>q0 = defM.q0;</pre></div></div>
+            <div class="content"><div class='highlight'><pre>F = defM.F;</pre></div></div>
             
         </li>
         
@@ -236,11 +256,11 @@ Machine Definition //
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-13">&#182;</a>
               </div>
-              <p>The delta transition function</p>
+              <p>The start state</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>delta = defM.delta;</pre></div></div>
+            <div class="content"><div class='highlight'><pre>q0 = defM.q0;</pre></div></div>
             
         </li>
         
@@ -250,6 +270,21 @@ Machine Definition //
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-14">&#182;</a>
+              </div>
+              <p>The delta transition function</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>delta = defM.delta;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-15">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-15">&#182;</a>
               </div>
               <p>Non-deterministic delta transition function
 Return: “oe” for empty set(dead state)</p>
@@ -261,11 +296,11 @@ Return: “oe” for empty set(dead state)</p>
         </li>
         
         
-        <li id="section-15">
+        <li id="section-16">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-15">&#182;</a>
+                <a class="pilcrow" href="#section-16">&#182;</a>
               </div>
               <p>get the output array</p>
 
@@ -276,11 +311,11 @@ Return: “oe” for empty set(dead state)</p>
         </li>
         
         
-        <li id="section-16">
+        <li id="section-17">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-16">&#182;</a>
+                <a class="pilcrow" href="#section-17">&#182;</a>
               </div>
               <p>if empty (dead state), return empty set “oe”</p>
 
@@ -292,11 +327,11 @@ Return: “oe” for empty set(dead state)</p>
         </li>
         
         
-        <li id="section-17">
+        <li id="section-18">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-17">&#182;</a>
+                <a class="pilcrow" href="#section-18">&#182;</a>
               </div>
               <p>if without index, return whole set(array)</p>
 
@@ -308,11 +343,11 @@ Return: “oe” for empty set(dead state)</p>
         </li>
         
         
-        <li id="section-18">
+        <li id="section-19">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-18">&#182;</a>
+                <a class="pilcrow" href="#section-19">&#182;</a>
               </div>
               <p>with index, return specific entry(undefined if invalid index)</p>
 
@@ -320,25 +355,7 @@ Return: “oe” for empty set(dead state)</p>
             
             <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">else</span>
     	<span class="hljs-keyword">return</span> arr[index];
-}</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-19">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-19">&#182;</a>
-              </div>
-              <p>Deterministic delta function, return outputs to input(q,s)
-Is a restriction of nd() - nondeterministic delta.</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> d = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(q, s)</span> </span>{
-	nd(q, s, <span class="hljs-number">0</span>);
-}</pre></div></div>
+};</pre></div></div>
             
         </li>
         
@@ -349,11 +366,14 @@ Is a restriction of nd() - nondeterministic delta.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-20">&#182;</a>
               </div>
-              <p>Export the delta function to be used by tree</p>
+              <p>Deterministic delta function, return outputs to input(q,s)
+Is a restriction of nd() - nondeterministic delta.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>exports.nd = nd;</pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> d = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(q, s)</span> </span>{
+	<span class="hljs-keyword">return</span> nd(q, s, <span class="hljs-number">0</span>);
+};</pre></div></div>
             
         </li>
         
@@ -364,11 +384,12 @@ Is a restriction of nd() - nondeterministic delta.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-21">&#182;</a>
               </div>
-              <p>///////////////////////
-Machine computation //
-///////////////////////</p>
+              <p>Export the nd for Tree, then import Tree below to compute</p>
 
             </div>
+            
+            <div class="content"><div class='highlight'><pre>exports.nd = nd;
+exports.d = d;</pre></div></div>
             
         </li>
         
@@ -379,11 +400,11 @@ Machine computation //
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-22">&#182;</a>
               </div>
-              <p>Import the tape inputs</p>
+              <p>Export the machine for usage elsewhere</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> input = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./input.json'</span>).strings;</pre></div></div>
+            <div class="content"><div class='highlight'><pre>exports.defM = defM;</pre></div></div>
             
         </li>
         
@@ -394,11 +415,11 @@ Machine computation //
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-23">&#182;</a>
               </div>
-              <p>Import the Tree</p>
+              <p>///////////////////////
+Machine computation //
+///////////////////////</p>
 
             </div>
-            
-            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> t = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./Tree.js'</span>);</pre></div></div>
             
         </li>
         
@@ -409,11 +430,11 @@ Machine computation //
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-24">&#182;</a>
               </div>
-              <p>Construct a tree with the start state of machine</p>
+              <p>Import the tape inputs</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> m1;</pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> input = defM.inputs;</pre></div></div>
             
         </li>
         
@@ -424,11 +445,11 @@ Machine computation //
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-25">&#182;</a>
               </div>
-              <p>function to compute one input</p>
+              <p>Import the Tree</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> compute = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(i)</span> </span>{</pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> t = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./Tree.js'</span>);</pre></div></div>
             
         </li>
         
@@ -438,6 +459,36 @@ Machine computation //
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-26">&#182;</a>
+              </div>
+              <p>Construct a tree with the start state of machine</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> m1;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-27">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-27">&#182;</a>
+              </div>
+              <p>function to compute one input</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> compute = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(i)</span> </span>{</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-28">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-28">&#182;</a>
               </div>
               <p>init new tree</p>
 
@@ -451,11 +502,11 @@ Machine computation //
         </li>
         
         
-        <li id="section-27">
+        <li id="section-29">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-27">&#182;</a>
+                <a class="pilcrow" href="#section-29">&#182;</a>
               </div>
               <p>Compute with the tape</p>
 
@@ -469,11 +520,11 @@ Machine computation //
         </li>
         
         
-        <li id="section-28">
+        <li id="section-30">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-28">&#182;</a>
+                <a class="pilcrow" href="#section-30">&#182;</a>
               </div>
               <p>Check for accept states in the lowest level of tree = forefront</p>
 
@@ -493,11 +544,11 @@ Machine computation //
         </li>
         
         
-        <li id="section-29">
+        <li id="section-31">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-29">&#182;</a>
+                <a class="pilcrow" href="#section-31">&#182;</a>
               </div>
               <p>Compute all input strings</p>
 
@@ -512,17 +563,21 @@ Machine computation //
         </li>
         
         
-        <li id="section-30">
+        <li id="section-32">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-30">&#182;</a>
+                <a class="pilcrow" href="#section-32">&#182;</a>
               </div>
-              <p>Run machine to compute all inputs</p>
+              <p>////////////////////////////////////////////
+The main call to run all functions above //
+Construct and run machine on all inputs  //
+////////////////////////////////////////////</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>computeAll();</pre></div></div>
+            <div class="content"><div class='highlight'><pre>
+computeAll();</pre></div></div>
             
         </li>
         
