@@ -233,7 +233,8 @@ console.log(F);</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> findDistin = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(P)</span> </span>{</pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> findDistin = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(P)</span> </span>{
+    <span class="hljs-keyword">var</span> unchanged = <span class="hljs-number">1</span>;</pre></div></div>
             
         </li>
         
@@ -244,12 +245,11 @@ console.log(F);</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-12">&#182;</a>
               </div>
-              <p>take subset pair</p>
+              <p>control: run till no new distin pairs is found</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; P.length - <span class="hljs-number">1</span>; i++) {
-        <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> j = i + <span class="hljs-number">1</span>; j &lt; P.length; j++) {</pre></div></div>
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">while</span> (unchanged != <span class="hljs-number">0</span>) {</pre></div></div>
             
         </li>
         
@@ -260,11 +260,11 @@ console.log(F);</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-13">&#182;</a>
               </div>
-              <p>for each input symbol</p>
+              <p>reset</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>            _.each(S, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(s)</span> </span>{</pre></div></div>
+            <div class="content"><div class='highlight'><pre>        unchanged = <span class="hljs-number">0</span>;</pre></div></div>
             
         </li>
         
@@ -275,19 +275,12 @@ console.log(F);</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-14">&#182;</a>
               </div>
-              <p>see the the mapped pair is distinguishable</p>
+              <p>take subset pair</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>                <span class="hljs-keyword">if</span> (isDistin(P[i], P[j], s)) {
-                    distinTable[
-                        _.sortBy([P[i], P[j]])
-                    ] = <span class="hljs-number">1</span>;
-                }
-            });
-        }
-    }
-};</pre></div></div>
+            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; P.length - <span class="hljs-number">1</span>; i++) {
+            <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> j = i + <span class="hljs-number">1</span>; j &lt; P.length; j++) {</pre></div></div>
             
         </li>
         
@@ -297,6 +290,79 @@ console.log(F);</p>
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-15">&#182;</a>
+              </div>
+              <p>for each input symbol</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>                _.each(S, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(s)</span> </span>{</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-16">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-16">&#182;</a>
+              </div>
+              <p>see the the mapped pair is distinguishable</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>                    <span class="hljs-keyword">if</span> (isDistin(P[i], P[j], s)) {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-17">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-17">&#182;</a>
+              </div>
+              <p>if previously 0, mark as 1</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>                        <span class="hljs-keyword">if</span> (distinTable[
+                                _.sortBy([P[i], P[j]])
+                            ] === <span class="hljs-number">0</span>) {
+                            distinTable[
+                                _.sortBy([P[i], P[j]])
+                            ] = <span class="hljs-number">1</span>;
+                            unchanged++;
+                        };
+
+                    }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-18">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-18">&#182;</a>
+              </div>
+              <p>or else, none is changed, terminate algo</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>                });
+            }
+        }
+    }
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-19">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-19">&#182;</a>
               </div>
               <p>run the algorithm</p>
 
@@ -308,11 +374,11 @@ console.log(F);</p>
         </li>
         
         
-        <li id="section-16">
+        <li id="section-20">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-16">&#182;</a>
+                <a class="pilcrow" href="#section-20">&#182;</a>
               </div>
               <p>set all the initial distinct pairs Fc x F to map, value = 1</p>
 
@@ -329,28 +395,29 @@ console.log(F);</p>
         </li>
         
         
-        <li id="section-17">
+        <li id="section-21">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-17">&#182;</a>
+                <a class="pilcrow" href="#section-21">&#182;</a>
               </div>
               <p>run for each pair in partitions F, Fc</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    findDistin(F);
+            <div class="content"><div class='highlight'><pre>
+    findDistin(F);
     findDistin(Fc);
 };</pre></div></div>
             
         </li>
         
         
-        <li id="section-18">
+        <li id="section-22">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-18">&#182;</a>
+                <a class="pilcrow" href="#section-22">&#182;</a>
               </div>
               <p>The indent function for printTable()</p>
 
@@ -366,11 +433,11 @@ console.log(F);</p>
         </li>
         
         
-        <li id="section-19">
+        <li id="section-23">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-19">&#182;</a>
+                <a class="pilcrow" href="#section-23">&#182;</a>
               </div>
               <p>the function to print the distinTable</p>
 
@@ -381,11 +448,11 @@ console.log(F);</p>
         </li>
         
         
-        <li id="section-20">
+        <li id="section-24">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-20">&#182;</a>
+                <a class="pilcrow" href="#section-24">&#182;</a>
               </div>
               <p>print the horizontal axis</p>
 
@@ -402,11 +469,11 @@ console.log(F);</p>
         </li>
         
         
-        <li id="section-21">
+        <li id="section-25">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-21">&#182;</a>
+                <a class="pilcrow" href="#section-25">&#182;</a>
               </div>
               <p>write the vertical axis</p>
 
@@ -417,11 +484,11 @@ console.log(F);</p>
         </li>
         
         
-        <li id="section-22">
+        <li id="section-26">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-22">&#182;</a>
+                <a class="pilcrow" href="#section-26">&#182;</a>
               </div>
               <p>indent</p>
 
@@ -432,11 +499,11 @@ console.log(F);</p>
         </li>
         
         
-        <li id="section-23">
+        <li id="section-27">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-23">&#182;</a>
+                <a class="pilcrow" href="#section-27">&#182;</a>
               </div>
               <p>print a row from distinTable</p>
 
@@ -456,11 +523,11 @@ console.log(F);</p>
         </li>
         
         
-        <li id="section-24">
+        <li id="section-28">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-24">&#182;</a>
+                <a class="pilcrow" href="#section-28">&#182;</a>
               </div>
               <p>the main function, run all above</p>
 
@@ -472,11 +539,11 @@ printTable();</pre></div></div>
         </li>
         
         
-        <li id="section-25">
+        <li id="section-29">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-25">&#182;</a>
+                <a class="pilcrow" href="#section-29">&#182;</a>
               </div>
               <p>export the distinTable to construct the minimal DFA</p>
 

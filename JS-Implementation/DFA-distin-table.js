@@ -52,18 +52,32 @@ var isDistin = function(state1, state2, symbol) {
 
 // run the algorithm function above on setP
 var findDistin = function(P) {
-    // take subset pair
-    for (var i = 0; i < P.length - 1; i++) {
-        for (var j = i + 1; j < P.length; j++) {
-            // for each input symbol
-            _.each(S, function(s) {
-                // see the the mapped pair is distinguishable
-                if (isDistin(P[i], P[j], s)) {
-                    distinTable[
-                        _.sortBy([P[i], P[j]])
-                    ] = 1;
-                }
-            });
+    var unchanged = 1;
+    // control: run till no new distin pairs is found
+    while (unchanged != 0) {
+        // reset
+        unchanged = 0;
+        // take subset pair
+        for (var i = 0; i < P.length - 1; i++) {
+            for (var j = i + 1; j < P.length; j++) {
+                // for each input symbol
+                _.each(S, function(s) {
+                    // see the the mapped pair is distinguishable
+                    if (isDistin(P[i], P[j], s)) {
+                        // if previously 0, mark as 1
+                        if (distinTable[
+                                _.sortBy([P[i], P[j]])
+                            ] === 0) {
+                            distinTable[
+                                _.sortBy([P[i], P[j]])
+                            ] = 1;
+                            unchanged++;
+                        };
+
+                    }
+                    // or else, none is changed, terminate algo
+                });
+            }
         }
     }
 };
@@ -79,6 +93,7 @@ var runAlgo = function() {
         });
     });
     // run for each pair in partitions F, Fc
+
     findDistin(F);
     findDistin(Fc);
 };
