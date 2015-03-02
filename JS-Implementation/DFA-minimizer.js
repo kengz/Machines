@@ -109,7 +109,6 @@ var constructMinDFA = function() {
         	// remove all the redundant states
             defM.Q = _.without(defM.Q, p[i]);
             defM.F = _.without(defM.F, p[i]);
-            defM.q0 = _.without(defM.F, p[i]);
             defM.delta = _.omit(defM.delta, p[i]);
 
             // change the innermost result state
@@ -146,7 +145,9 @@ var constructMinDFA = function() {
 // the main function, run all above
 constructMinDFA();
 
-var outFile = './Definitions/minDFA.json';
+// var outFile = './Definitions/minDFA.json';
+var outFile = './Definitions/minDFA_4_4_2.json';
+// var outFile = './Definitions/minDFA_3_2_1.json';
 var fs = require('fs');
 fs.writeFile(outFile, JSON.stringify(defM, null, 4), function(err) {
     if (err) {

@@ -16,7 +16,15 @@ var _ = require("underscore");
 // var defM = require('./Definitions/DFAtoMin3.json');
 // ex 4.4.2
 var defM = require('./Definitions/DFAtoMin4.json');
+// ex 3.2.1
+// var defM = require('./Definitions/machine_3_2_1.json');
+// ex 3.2.2
+// var defM = require('./Definitions/machine_3_2_2.json');
 // var defM = require('./Definitions/minDFA.json');
+// var defM = require('./Definitions/minDFA_4_4_1.json');
+// var defM = require('./Definitions/minDFA_4_4_2.json');
+// var defM = require('./Definitions/minDFA_3_2_1.json');
+// var defM = require('./Definitions/minDFA_3_2_2.json');
 
 
 ////////////////////////
