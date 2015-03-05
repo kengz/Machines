@@ -126,11 +126,12 @@ Tree.prototype.parseTape = function(tapeinput) {
 
 // Print the tree
 Tree.prototype.printTree = function() {
+	console.log("Printing Tree");
 	this.root.preOrder();
 }
 // TM: compute, either till halting configs, or till maxStep
 Tree.prototype.compute = function() {
-	var maxStep = 1000000;
+	var maxStep = 10;
 	
 	// either loop till maxStep, or terminate in undefined = reject, or accept
 	while (maxStep > 0) {
@@ -204,7 +205,7 @@ Tree.prototype.moveHead = function(tape, h, move) {
 		h++;
 	}
 	// else if move left
-	else {
+	else if (move == 'L') {
 		// if currently at leftmost, add blank symbol to front
 		if (h == 0)
 			tape.unshift(defM.B);
@@ -212,7 +213,8 @@ Tree.prototype.moveHead = function(tape, h, move) {
 		else
 			h--;
 	}
-	// console.log(tapein);
+	else {}
+		// console.log("Tape is: ", tape);
 	return {
 		tape: tape,
 		head: h
@@ -226,14 +228,16 @@ Tree.prototype.expand = function(root) {
 		// config triple for root.
 		var q = root.state;
 		var h = root.head;
-		// tape: array needs to be copied explicitly
-		var t = [];
-		_.each(root.tape, function(e) { t.push(e)});
+		// tape: array needs to be copied explicitly, below inside loop
+
 		// read tape
-		var s = t[h];
+		var s = root.tape[h];
 
 		// for all non-deterministic options from delta, do
 		for (var i = 0; i < nd(q, s).length; i++) {
+			// first, copy the tape
+			var t = [];
+			_.each(root.tape, function(e) { t.push(e)});
 			// get the triple {state, write, move}
 			var c = nd(q, s, i);
 			// get next state
@@ -283,15 +287,18 @@ Tree.prototype.expandEChild = function(child) {
 	// config triple
 	var q = child.state;
 	var h = child.head;
-	// tape: array needs to be copied explicitly
-	var t = [];
-	_.each(root.tape, function(e) { t.push(e)});
+	// tape: array needs to be copied explicitly below
+	// var t = [];
+	// _.each(child.tape, function(e) { t.push(e)});
 	// read tape
-	var s = t[h];
+	var s = child.tape[h];
 
 	// if has epsilon transition, then expand
 	if (! (nd(q, "/") == 'oe' )) {
 		for (var i = 0; i < nd(q, "/").length; i++) {
+			// first, copy the tape
+			var t = [];
+			_.each(child.tape, function(e) { t.push(e)});
 			// The triple {state, write, move}
 			var c = nd(q, "/", i);
 			// get next state

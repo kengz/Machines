@@ -27,7 +27,9 @@ var _ = require("underscore");
 // var defM = require('./Definitions/minDFA_3_2_1.json');
 // var defM = require('./Definitions/minDFA_3_2_2.json');
 
-var defM = require('./Definitions/tm-def.json');
+// var defM = require('./Definitions/tm-def.json');
+// var defM = require('./Definitions/tm-def2.json');
+var defM = require('./Definitions/tm-def3.json');
 
 
 ////////////////////////
@@ -138,25 +140,21 @@ var compute = function(i) {
     console.log("Machine computing:");
     console.log("===================");
 
-    // CHANGE TO Tape
-    // THEN CHANGE tree only how it gets the state. nd returns the whole thing, appended with head location and tape content
-    
     // Compute with a tape, run all symbols
     // for (var j = 0; j < input[i].length; j++) {
     //     m1.nextStep(input[i][j]);
     // }
     m1.compute();
     m1.printTree();
-    console.log(m1.root.tape);
 
     // Check for accept states in the lowest level of tree = forefront
     var accepts = _.intersection(m1.forefront, F);
     if (accepts.length > 0) {
         console.log("Forefront: " + _.uniq(m1.forefront));
         console.log("Accepted states: " + accepts);
-        console.log("======Accept.======\n");
+        console.log("======Accept.======\n\n");
     } else {
-        console.log("======Reject.======\n");
+        console.log("======Reject.======\n\n");
     }
 
 };
@@ -176,8 +174,10 @@ var computeAll = function() {
 // Construct and run machine on all inputs  //
 //////////////////////////////////////////////
 
-compute(0);
-compute(1);
+computeAll();
+
+// compute(0);
+// compute(1);
 
 // var arr = [1,2,3];
 
