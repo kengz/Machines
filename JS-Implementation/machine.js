@@ -43,22 +43,6 @@ var defM = require('./Definitions/tm-def3.json');
 // TM: T = tape symbols, B = blank symbol
 var Q, S, F, T, B, q0, delta;
 
-// A sample delta table format; will be imported from a JSON file
-// A map from input pair-key (Q, S); to array of outputs values
-// Keys that map to empty set are not recorded; see nd() output.
-delta = {
-    // an input state
-    a: {
-        // an input symbol, yields general array of outputs
-        0: ["a"],
-        1: ["a", "b"]
-    },
-    b: {
-        0: ["c"],
-        "/": ["c"]
-    }
-};
-
 // Note: qreject if return undefined
 
 // The states

@@ -126,7 +126,7 @@ Tree.prototype.parseTape = function(tapeinput) {
 
 // Print the tree
 Tree.prototype.printTree = function() {
-	console.log("Printing Tree");
+	console.log("Printing Tree, config: <state> <head-pos> <tape>");
 	this.root.preOrder();
 }
 // TM: compute, either till halting configs, or till maxStep
@@ -191,11 +191,19 @@ Tree.prototype.compute = function() {
 Tree.prototype.halt = function(finalstate) {
 	this.halter = finalstate;
 }
+
+// If DFA, TM-restriction = restriction of this
+// write a control loop depending on type from defM,
+// or a super method that calls writeMoveHead and other methods
+
 // Moving head on the TM tape, handles boundary conditions
-Tree.prototype.moveHead = function(tape, h, move) {
-	// var tape = [];
-	// _.each(tapein, function(e) { tape.push(e)});
-	// move right
+Tree.prototype.writeMoveHead = function(oritape, write, h, move) {
+	// explicitly copy tape
+	var tape = [];
+	_.each(oritape, function(e) { tape.push(e)});
+	// first write at h,
+	tape[h] = write;
+	// then move h: move right
 	if (move == 'R') {
 		// if reach tape boundary, add blank symbol
 		if (tape[h+1] == undefined) {
@@ -213,8 +221,7 @@ Tree.prototype.moveHead = function(tape, h, move) {
 		else
 			h--;
 	}
-	else {}
-		// console.log("Tape is: ", tape);
+	// else {}
 	return {
 		tape: tape,
 		head: h
@@ -228,24 +235,18 @@ Tree.prototype.expand = function(root) {
 		// config triple for root.
 		var q = root.state;
 		var h = root.head;
-		// tape: array needs to be copied explicitly, below inside loop
-
+		var rt = root.tape;
 		// read tape
 		var s = root.tape[h];
 
 		// for all non-deterministic options from delta, do
 		for (var i = 0; i < nd(q, s).length; i++) {
-			// first, copy the tape
-			var t = [];
-			_.each(root.tape, function(e) { t.push(e)});
 			// get the triple {state, write, move}
 			var c = nd(q, s, i);
 			// get next state
 			var r = c.state;
-			// write on to tape
-			t[h] = c.write;
-			// then move head;
-			var moved = this.moveHead(t, h, c.move);
+			// copy, write to tape, then move head;
+			var moved = this.writeMoveHead(rt, c.write, h, c.move);
 			h = moved.head; t = moved.tape;
 			
 			// create a child with new state, moved head, new tape
@@ -287,26 +288,19 @@ Tree.prototype.expandEChild = function(child) {
 	// config triple
 	var q = child.state;
 	var h = child.head;
-	// tape: array needs to be copied explicitly below
-	// var t = [];
-	// _.each(child.tape, function(e) { t.push(e)});
+	var rt = child.tape;
 	// read tape
 	var s = child.tape[h];
 
 	// if has epsilon transition, then expand
 	if (! (nd(q, "/") == 'oe' )) {
 		for (var i = 0; i < nd(q, "/").length; i++) {
-			// first, copy the tape
-			var t = [];
-			_.each(child.tape, function(e) { t.push(e)});
 			// The triple {state, write, move}
 			var c = nd(q, "/", i);
 			// get next state
 			var r = c.state;
-			// write on to tape
-			t[h] = c.write;
-			// then move head
-			var moved = this.moveHead(t, h, c.move);
+			// copy, write to tape, then move head;
+			var moved = this.writeMoveHead(rt, c.write, h, c.move);
 			t = moved.tape; h = moved.head;
 
 			// add to tree, push state to forefront
