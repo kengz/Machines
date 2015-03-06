@@ -28,8 +28,8 @@ var _ = require("underscore");
 // var defM = require('./Definitions/minDFA_3_2_2.json');
 
 // var defM = require('./Definitions/tm-def.json');
-// var defM = require('./Definitions/tm-def2.json');
-var defM = require('./Definitions/tm-def3.json');
+var defM = require('./Definitions/tm-def2.json');
+// var defM = require('./Definitions/tm-def3.json');
 
 
 ////////////////////////
@@ -44,9 +44,9 @@ var defM = require('./Definitions/tm-def3.json');
 var Q, S, F, T, B, q0, delta;
 
 // Note: qreject if return undefined
-
+var Mclass = defM.class;
 // The states
-Q = _.union(defM.Q, [defM.q0] );
+Q = _.union(defM.Q, [defM.q0]);
 // The alphabet, union with epsilon symbol "/"
 S = _.union(defM.S, ["/"]);
 // The accept states
@@ -96,6 +96,33 @@ var d = function(q, s) {
 
 
 
+// Convert DFA into TM, copy; don't override
+// construct a new minimized DFA by changing a copy of defM and saving it
+var convertDFAtoTM = function() {
+    _.each(_.keys(delta), function(state) {
+        _.each(_.keys(delta[state]), function(symbol) {
+            _.each(delta[state][symbol], function(output) {
+                // replace with TM output: state, write(same), move(right)
+                delta[state][symbol] = [
+                    [output, symbol, "R"]
+                ];
+            });
+        });
+    });
+    // replace the modified delta for TM
+    defM.delta = delta;
+    // and add the additional 2-tuples
+    defM.B = "_";
+    defM.T = _.union(T, defM.B);
+};
+
+
+// console.log(delta);
+// defM.delta = delta;
+// console.log(defM.delta);
+// console.log(delta['a']['0'][0]);
+
+
 // Export the nd for Tree, then import Tree below to compute
 exports.nd = nd;
 exports.d = d;
@@ -113,21 +140,28 @@ exports.defM = defM;
 var input = defM.inputs;
 // Import the Tree
 var t = require('./Tree.js');
-// Construct a tree with the start state of machine
-var m1;
+
+// Compute all input strings
+var computeAll = function() {
+    // if is DFA or NFA, convert to TM, then export def
+    if (Mclass == 'DFA' || Mclass == 'NFA') {
+        convertDFAtoTM();
+    }
+
+    for (var i = 0; i < input.length; i++) {
+        compute(i);
+    };
+};
+
 
 // function to compute one input
 var compute = function(i) {
     // init new tree
-    m1 = new t.Tree(q0, input[i]);
+    var m1 = new t.Tree(Mclass, q0, input[i]);
     console.log("Tape: " + input[i]);
     console.log("Machine computing:");
     console.log("===================");
 
-    // Compute with a tape, run all symbols
-    // for (var j = 0; j < input[i].length; j++) {
-    //     m1.nextStep(input[i][j]);
-    // }
     m1.compute();
     m1.printTree();
 
@@ -143,15 +177,6 @@ var compute = function(i) {
 
 };
 
-// Compute all input strings
-var computeAll = function() {
-    for (var i = 0; i < input.length; i++) {
-        compute(i);
-    };
-};
-
-
-
 
 //////////////////////////////////////////////
 // The main call to run all functions above //
@@ -160,8 +185,9 @@ var computeAll = function() {
 
 computeAll();
 
-// compute(0);
+// convertDFAtoTM();
 // compute(1);
+// compute(3);
 
 // var arr = [1,2,3];
 
