@@ -70,18 +70,24 @@ delta = defM.delta;
 // Non-deterministic delta transition function
 // Return: "oe" for empty set(dead state)
 var nd = function(q, s, index) {
-    // get the output array
+    // if a state is absent in delta, dead:
+    if (delta[q] == undefined) {
+        return { state: 'oe' }
+    }
+    // else if state present: get the output array
     var arr = delta[q][s];
-    // if empty (dead state), return empty set "oe"
+    // if symbol absent for state, (return empty 'oe' = dead state)
     if (arr == undefined)
-        // return "oe";
         return {
-            state: "oe",
-            move: "R" };
-    // if without index, return whole set(array), used by iterator
+            // for DFA
+            state: 'oe',
+            move: 'R' 
+        }
+    // else if state, symbol present, 
+    // but called without index, return whole set(array), used by iterator
     else if (index == undefined)
         return arr;
-    // with index, return specific entry(undefined if invalid index)
+    // lastly, if with index, return specific entry(undefined if invalid index)
     else
         return {
             state: arr[index][0],

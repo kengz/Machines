@@ -126,23 +126,10 @@ Tree.prototype.parseTape = function(tapeinput) {
 	return tape;
 }
 
-// Print the tree
-Tree.prototype.printTree = function() {
-	// Tell format for TM
-	if (this.Mclass == 'TM') {
-		console.log("Printing Tree, config: <state> <head-pos> <tape>");
-	}
-	// Format for DFA/NFA
-	else if (this.Mclass == 'DFA' || this.Mclass == "NFA") {
-		console.log("Printing Tree: inputsymbol> \n result-state");
-	};
-	// print according to machine class
-	this.root.preOrder( this.Mclass );
-}
 // TM: compute, either till halting configs, or till maxStep
 Tree.prototype.compute = function() {
 	// The max steps before halting
-	var maxStep = 30;
+	var maxStep = 50;
 	
 	// either loop till maxStep, or terminate in undefined = reject, or accept
 	while (maxStep > 0) {
@@ -150,13 +137,13 @@ Tree.prototype.compute = function() {
 		// reset forefront and 
 		this.forefront = [];
 		// expand next depth of tree, calls halt() if reaches halting config
-		this.expand(this.root);
+		this.oneStep(this.root);
 		this.treeDepth++;
 		// console.log("halter is: ", this.halter);
 
 		// if found halting state, halt() called in expand(), break loop
 		if ( this.halter != undefined ) {
-			console.log("Computation halts.");
+			console.log("Computation halts: ", this.halter);
 			break;
 		};
 		// else keep looping till limit is reached
@@ -167,88 +154,77 @@ Tree.prototype.compute = function() {
 		console.log("maxSteps exceeded. TM instance probably doesn't halt");
 	};
 }
-// the halt function called upon state: undefined = reject, or accept
-Tree.prototype.halt = function(finalstate) {
-	this.halter = finalstate;
+
+
+
+Tree.prototype.oneStep = function(node) {
+	// travel down till the right depth to expand from the node
+	if (node.depth === this.treeDepth) {
+		// old state and head location
+		var q = node.state;
+		var h = node.head;
+
+		// 1. Read from tape
+		var s = this.Read(node);
+		// If config yields valid delta, the add children by non-determinism
+		// NOT executed if nd(q,s) is invalid – halt machine below.
+		for (var i = 0; i < nd(q,s).length; i++) {
+			// get the output triple {state, write, move}
+			var ndOut = nd(q,s,i);
+
+			// 2. Write
+			var tape = this.Write(node, ndOut);
+			// 3. Move. Last step: return config
+			var config = this.Move(node, ndOut, tape);
+
+			// Add child with new config to node
+			this.Expand(node, config);
+
+		};
+		// 4. Finally, halt at this node if necessary
+		this.TryHalt(q,s,h);
+	}
+
+	// recursive call till the correct depth
+	else {
+		for (var i = 0; i < node.children.length; i++) {
+			this.oneStep(node.children[i]);
+		}
+	}
 }
 
+
+
+// 1. Read: called once even in non-determinism
 Tree.prototype.Read = function(node) {
-	// at the right depth
-	var q = node.state;
-
-	// read state, read stack
-	var s = node.tape[h];
-	// get delta (whole array)
-	// var ndOut = nd(q, s);
-	// if Mclass == 'PDA', read stack by popping
-	return nd(q, s);
+	// read tape symbol at head
+	return node.tape[node.head];
 }
-Tree.prototype.Write = function(node) {
-	// get head and tape, ready to write
+// for PDA, simply add a write Stack method, and read from stack too
+
+// 2. Write: can be called as many times as needed in non-determinism
+Tree.prototype.Write = function(node, ndOut) {
+	// explicitly copy tape
+	var tape = [];
+	_.each(node.tape, function(e) { tape.push(e) });
+	
 	var h = node.head;
-	var rt = node.tape;
-	// copy tape
-	var tape = [];
-	_.each(oritape, function(e) { tape.push(e)});
-
-	// careful, is an array
-	var ndOut = Read(node);
-
-	var state = ndOut.state;
-	if (this.Mclass == 'TM') {
-		tape[h] = ndOut.write;
-	};
-	
-	return {
-		state: state,
-		tape: tape,
-		head: h
-	}
-}
-Tree.prototype.Move = function() {
-
-}
-
-
-
-
-
-
-// If DFA, TM-restriction = restriction of this
-// write a control loop depending on type from defM,
-// or a super method that calls writeMoveHead and other methods
-Tree.prototype.GenMove = function() {
-	switch (this.Mclass) {
-		case 'TM': {
-			console.log("This is a TM");
-			break;
-		}
-		case 'DFA': {
-			console.log("This is a DFA");
-			break;
-		}
-		default: break;
-	}
-}
-
-
-
-
-
-
-// TM move: Moves head on the TM tape, handles boundary conditions
-Tree.prototype.writeMoveHead = function(oritape, h, ndOut) {
-	// the state
-	var state = ndOut.state;
-
-	// explicitly copy tape (required)
-	var tape = [];
-	_.each(oritape, function(e) { tape.push(e)});
-
-	// first write at h,
+	// if is epsilon, reverse one-step
+	if (node.epsilon)
+		h--;
+		
+	// then write to it at head
 	tape[h] = ndOut.write;
-	
-	// then move h: 
+	// return the new tape
+	return tape;
+}
+// 3. Move: after writing on the new tape, expand it if needed, and move head
+Tree.prototype.Move = function(node, ndOut, tape) {
+	// the old head position
+	var h = node.head;
+	// if is epsilon, reverse one-step
+	if (node.epsilon)
+		h--;
 	// move right
 	if (ndOut.move == 'R') {
 		// if reach tape boundary, add blank symbol
@@ -267,109 +243,112 @@ Tree.prototype.writeMoveHead = function(oritape, h, ndOut) {
 		else
 			h--;
 	}
-	
-	// return config
+
+	// since is the last step: return the config
 	return {
-		state: state,
+		// the next state
+		state: ndOut.state,
+		// the (expanded) tape and new head
 		tape: tape,
 		head: h
 	}
 }
-// TM: Expand the tree: continue to compute, add children and epsilon children, until the end of computation
-Tree.prototype.expand = function(root) {
-	// travel down till the right depth to expand from this node as root
-	if (root.depth === this.treeDepth) {
 
-		// config triple for root.
-		var q = root.state;
-		var h = root.head;
-		var rt = root.tape;
-		// read tape
-		var s = root.tape[h];
-
-		// for all non-deterministic options from delta, do
-		for (var i = 0; i < nd(q, s).length; i++) {
-			// reset the head: required since will be altered
-			h = root.head;
-			// get the output triple {state, write, move}
-			var ndOut = nd(q, s, i);
-
-			// copy, write to tape, then move head;
-			var next = this.writeMoveHead(rt, h, ndOut);
-			var r = next.state; var h = next.head; var t = next.tape;
-			
-			// create a child with new state, moved head, new tape
-			var child = root.addChild(r, h, t);
-
-			// TM halting:
-			if (this.Mclass == 'TM') {
-				// Then check for halting: reject (c=='oe' dead),
-				if (ndOut.state == 'oe') {
-					this.halt("reject");
-					break;
-				} 
-				// or accept state
-				else if ( _.contains(defM.F, r) ) {
-					// add the accepting state to forefront and halt
-					this.forefront.push(child.state);
-					this.halt(r);
-					break;
-				}
-			};
-			
-			// None-halting: if child isn't dead state, add to forefront
-			if (child != null) {
-				this.forefront.push(child.state);
-				// A e-NFA-only move: expand parallel epsilon children
-				this.expandEChild(child);
-			}
-
+// 4. Halt the TM if necessary
+Tree.prototype.TryHalt = function(q,s,h) {
+	// TM halting:
+	if (this.Mclass == 'TM') {
+		// If this node outputs deadstate 'oe', reject 
+		if (nd(q,s).state == 'oe') {
+			this.halt("reject");
+		} 
+		// or in the forloop above, forefront has accept state, accept
+		else if ( !_.isEmpty( _.intersection(defM.F, this.forefront) ) ) {
+			this.halt("accept");
 		}
+	};
 
-		// DFA/NFA halting: after the last tape symbol
-		if (this.Mclass == 'DFA' || this.Mclass == 'NFA') {
-			if ( h == this.tape.length ) {
-				this.halt("stop");
-			}
-		};
-
-	} 
-
-	// recursive call till the correct depth
-	else {
-		for (var i = 0; i < root.children.length; i++) {
-			this.expand(root.children[i]);
+	// DFA/NFA halting: after the last tape symbol
+	if (this.Mclass == 'DFA' || this.Mclass == 'NFA') {
+		// if header moves past the last tape symbol
+		if ( h == this.tape.length ) {
+			this.halt("stop");
 		}
+	};
+}
+
+// Halt the TM with the result
+Tree.prototype.halt = function(result) {
+	this.halter = result;
+}
+
+
+
+
+// Add a new child with config to node, along with epsilon-expansions
+Tree.prototype.Expand = function(node, config) {
+	var r = config.state; var h = config.head; var t = config.tape;
+	var child = node.addChild(r, h, t);
+	
+	// If child isn't dead state, add to forefront
+	if (child != null) {
+		this.forefront.push(child.state);
+		// An epsilon move: expand parallel in tree
+		this.expandEChild(child);
 	}
 }
 
 // Not really needed by TM: Just the NFA:
 // Expand the epsilon parallel branches: Add epsilon children
 Tree.prototype.expandEChild = function(child) {
+	// Go back to child's parent (e-child will share the same tree parent)
 	var root = child.Parent;
 
-	// config triple
+	// old state and head location
 	var q = child.state;
 	var h = child.head;
-	var rt = child.tape;
 
-	// if has epsilon transition, then expand
-	if (! (nd(q, "/").state == 'oe' )) {
+	// 1. Read from tape
+	var s = this.Read(child);
+
+	// if child has epsilon transition, 
+	if ( (nd(q, "/").state != 'oe' )) {
+		// then expand
 		for (var i = 0; i < nd(q, "/").length; i++) {
 			// The output triple {state, write, move}
 			var ndOut = nd(q, "/", i);
-			// copy, write to tape, then move head;
+			// mark that this child has an epsilon edge: h-- in Write and Move
+			child.skip();
+			// 2. Write: with h = h-1 (don't go to next tape symbol yet)
+			var tape = this.Write(child, ndOut);
+			// 3. Move. With h = h-1. Last step: return config
+			var config = this.Move(child, ndOut, tape);
 
-			// move with head offset to h-1 (don't go down the tree)
-			var next = this.writeMoveHead(rt, h-1, ndOut);
-			var r = next.state; var h = next.head; var t = next.tape;
-
-			// add to tree, push state to forefront
+			// head offset to h-1 (don't go down the tree)
+			var r = config.state; var h = config.head; var t = config.tape;
+			// add to same parent, push state to forefront
 			var eChild = root.addChild(r, h, t);
 			this.forefront.push(eChild.state);
+
+			// recurse as needed
 			this.expandEChild(eChild);
 		}
 	}
+}
+
+
+// Print the tree
+Tree.prototype.printTree = function() {
+	// Tell format for TM
+	if (this.Mclass == 'TM') {
+		console.log("Printing Tree, config: <state> <head-pos> <tape>\n");
+	}
+	// Format for DFA/NFA
+	else if (this.Mclass == 'DFA' || this.Mclass == "NFA") {
+		console.log("Printing Tree: inputsymbol> \n result-state\n");
+	};
+	// print according to machine class
+	this.root.preOrder( this.Mclass );
 }
 // Print all states resulting from the last computation step
 Tree.prototype.printForefront = function() {
