@@ -9,7 +9,7 @@ var _ = require("underscore");
 
 // Import machine definitions from JSON, including inputs at the last.
 // A sample DFA:
-// var defM = require('./Definitions/machine_def.json');
+var defM = require('./Definitions/machine_def.json');
 // For DFA minimization algorithm:
 // var defM = require('./Definitions/DFAtoMin1.json');
 // var defM = require('./Definitions/DFAtoMin2.json');
@@ -28,7 +28,7 @@ var _ = require("underscore");
 // var defM = require('./Definitions/minDFA_3_2_2.json');
 
 // var defM = require('./Definitions/tm-def.json');
-var defM = require('./Definitions/tm-def2.json');
+// var defM = require('./Definitions/tm-def2.json');
 // var defM = require('./Definitions/tm-def3.json');
 
 
@@ -74,7 +74,10 @@ var nd = function(q, s, index) {
     var arr = delta[q][s];
     // if empty (dead state), return empty set "oe"
     if (arr == undefined)
-        return "oe";
+        // return "oe";
+        return {
+            state: "oe",
+            move: "R" };
     // if without index, return whole set(array), used by iterator
     else if (index == undefined)
         return arr;
@@ -101,12 +104,11 @@ var d = function(q, s) {
 var convertDFAtoTM = function() {
     _.each(_.keys(delta), function(state) {
         _.each(_.keys(delta[state]), function(symbol) {
-            _.each(delta[state][symbol], function(output) {
-                // replace with TM output: state, write(same), move(right)
-                delta[state][symbol] = [
-                    [output, symbol, "R"]
-                ];
-            });
+            // replace with TM output: state, write(same), move(right)
+            for (var i = 0; i < delta[state][symbol].length; i++) {
+                delta[state][symbol][i] = 
+                    [ delta[state][symbol][i], symbol, "R"];
+            };
         });
     });
     // replace the modified delta for TM
