@@ -1,5 +1,6 @@
 {
     "class": "TM",
+    "description": "TM that recognizes string of 0, length = powers of 2",
     "Q": ["q1", "q2", "q3", "q4", "q5", "qa"],
     "S": [0],
     "T": ["x", "_"],

@@ -1,5 +1,6 @@
 {
     "class": "TM",
+    "description": "TM that recognizes repeating string separated by #",
     "Q": ["q1", "q2", "q3", "q4", "q5", "q6", "q7", "q8", "qa"],
     "S": [0, 1, "#"],
     "T": ["x", "_"],

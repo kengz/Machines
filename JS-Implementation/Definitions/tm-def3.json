@@ -1,5 +1,6 @@
 {
     "class": "TM",
+    "description": "Example of non-deterministic TM from textbook",
     "Q": ["q0", "q1", "q2"],
     "S": [0, 1],
     "T": ["_"],
