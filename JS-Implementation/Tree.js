@@ -102,7 +102,8 @@ Node.prototype.skip = function() { return this.epsilon = true; }
 function Tree(Mclass, state, tapeinput) {
 	// The machine class: TM or DFA or etc
 	this.Mclass = Mclass;
-	console.log("Constructed machine: ", Mclass);
+	console.log("Constructed machine:");
+	console.log("-------", Mclass, "-------");
 
 	// the sentinel for halting compute()
 	this.halter = undefined;
@@ -143,7 +144,8 @@ Tree.prototype.compute = function() {
 
 		// if found halting state, halt() called in expand(), break loop
 		if ( this.halter != undefined ) {
-			console.log("Computation halts: ", this.halter);
+			console.log("Computation halts: ");
+			console.log(this.halter);
 			break;
 		};
 		// else keep looping till limit is reached
@@ -156,7 +158,7 @@ Tree.prototype.compute = function() {
 }
 
 
-
+// One step in TM to yield next config(with non-determinism): read, write, move
 Tree.prototype.oneStep = function(node) {
 	// travel down till the right depth to expand from the node
 	if (node.depth === this.treeDepth) {
@@ -260,11 +262,11 @@ Tree.prototype.TryHalt = function(q,s,h) {
 	if (this.Mclass == 'TM') {
 		// If this node outputs deadstate 'oe', reject 
 		if (nd(q,s).state == 'oe') {
-			this.halt("reject");
+			this.halt("TM rejects.");
 		} 
 		// or in the forloop above, forefront has accept state, accept
 		else if ( !_.isEmpty( _.intersection(defM.F, this.forefront) ) ) {
-			this.halt("accept");
+			this.halt("TM accepts.");
 		}
 	};
 
@@ -272,7 +274,7 @@ Tree.prototype.TryHalt = function(q,s,h) {
 	if (this.Mclass == 'DFA' || this.Mclass == 'NFA') {
 		// if header moves past the last tape symbol
 		if ( h == this.tape.length ) {
-			this.halt("stop");
+			this.halt("Stops at tape end.");
 		}
 	};
 }
@@ -281,8 +283,6 @@ Tree.prototype.TryHalt = function(q,s,h) {
 Tree.prototype.halt = function(result) {
 	this.halter = result;
 }
-
-
 
 
 // Add a new child with config to node, along with epsilon-expansions
@@ -298,8 +298,7 @@ Tree.prototype.Expand = function(node, config) {
 	}
 }
 
-// Not really needed by TM: Just the NFA:
-// Expand the epsilon parallel branches: Add epsilon children
+// Epsilon transition, Expand parallel to the child to add epsilon-children
 Tree.prototype.expandEChild = function(child) {
 	// Go back to child's parent (e-child will share the same tree parent)
 	var root = child.Parent;
@@ -345,7 +344,7 @@ Tree.prototype.printTree = function() {
 	}
 	// Format for DFA/NFA
 	else if (this.Mclass == 'DFA' || this.Mclass == "NFA") {
-		console.log("Printing Tree: inputsymbol> \n result-state\n");
+		console.log("Printing Tree: input-symbol> & result-state\n");
 	};
 	// print according to machine class
 	this.root.preOrder( this.Mclass );

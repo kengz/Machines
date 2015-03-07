@@ -9,7 +9,7 @@ var _ = require("underscore");
 
 // Import machine definitions from JSON, including inputs at the last.
 // A sample DFA:
-var defM = require('./Definitions/machine_def.json');
+// var defM = require('./Definitions/machine_def.json');
 // For DFA minimization algorithm:
 // var defM = require('./Definitions/DFAtoMin1.json');
 // var defM = require('./Definitions/DFAtoMin2.json');
@@ -27,7 +27,7 @@ var defM = require('./Definitions/machine_def.json');
 // var defM = require('./Definitions/minDFA_3_2_1.json');
 // var defM = require('./Definitions/minDFA_3_2_2.json');
 
-// var defM = require('./Definitions/tm-def.json');
+var defM = require('./Definitions/tm-def.json');
 // var defM = require('./Definitions/tm-def2.json');
 // var defM = require('./Definitions/tm-def3.json');
 
@@ -64,8 +64,6 @@ delta = defM.delta;
 ///////////////////
 // modifications //
 ///////////////////
-///Change DFA parsing to wrap delta more like TM: [["a"]]
-
 
 // Non-deterministic delta transition function
 // Return: "oe" for empty set(dead state)
@@ -103,8 +101,6 @@ var d = function(q, s) {
 };
 
 
-
-
 // Convert DFA into TM, copy; don't override
 // construct a new minimized DFA by changing a copy of defM and saving it
 var convertDFAtoTM = function() {
@@ -125,11 +121,6 @@ var convertDFAtoTM = function() {
 };
 
 
-// console.log(delta);
-// defM.delta = delta;
-// console.log(defM.delta);
-// console.log(delta['a']['0'][0]);
-
 
 // Export the nd for Tree, then import Tree below to compute
 exports.nd = nd;
@@ -142,8 +133,6 @@ exports.defM = defM;
 // Machine computation //
 /////////////////////////
 
-// Gotta offset head and index for leftmoves
-
 // Import the tape inputs
 var input = defM.inputs;
 // Import the Tree
@@ -155,7 +144,7 @@ var computeAll = function() {
     if (Mclass == 'DFA' || Mclass == 'NFA') {
         convertDFAtoTM();
     }
-
+    // compute for all input
     for (var i = 0; i < input.length; i++) {
         compute(i);
     };
@@ -167,8 +156,7 @@ var compute = function(i) {
     // init new tree
     var m1 = new t.Tree(Mclass, q0, input[i]);
     console.log("Tape: " + input[i]);
-    console.log("Machine computing:");
-    console.log("===================");
+    console.log("Machine computing...\n");
 
     m1.compute();
     m1.printTree();
