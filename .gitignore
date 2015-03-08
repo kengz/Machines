@@ -4,6 +4,7 @@ bin-debug/
 bin-release/
 *.class
 *.java~
+.DS_Store
 
 # Other files and folders
 .settings/
