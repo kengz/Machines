@@ -46,7 +46,11 @@ Node.prototype.printHere = function(Mclass) {
 	// format for TM: config triple
 	if (Mclass == 'TM') {
 		this.indent();
-		console.log(this.state, this.head, this.tape);
+		// console.log(this.state, this.head, this.tape.join());
+		// config convention: state on the left of head location.
+		// not splice returns elements removed.
+		this.tape.splice(this.head, 0, this.state);
+		console.log(this.tape.join());
 	}
 
 	// format for DFA/NFA
