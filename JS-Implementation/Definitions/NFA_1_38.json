@@ -1,5 +1,6 @@
 {
     "class": "NFA",
+    "description": "NFA N1 from Sipser eg.1.38",
     "Q": ["a", "b", "c", "d"],
     "S": [0, 1],
     "F": ["d"],

@@ -145,9 +145,11 @@ console.log(partition);
 // the main function, run all above
 constructMinDFA();
 
-var outFile = './Definitions/minDFA.json';
-// var outFile = './Definitions/minDFA_4_4_1.json';
-// var outFile = './Definitions/minDFA_3_2_1.json';
+var outFile = './definitions/minDFA.json';
+// var outFile = './definitions/minDFA_4_4_1.json';
+// var outFile = './definitions/minDFA_4_4_2.json';
+// var outFile = './definitions/minDFA_3_2_1.json';
+// var outFile = './definitions/minDFA_3_2_2.json';
 var fs = require('fs');
 fs.writeFile(outFile, JSON.stringify(defM, null, 4), function(err) {
     if (err) {

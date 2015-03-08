@@ -1,5 +1,6 @@
 {
     "class": "DFA",
+    "description": "DFA from ex 3.2.1",
     "Q": ["a", "b", "c"],
     "S": [0, 1],
     "F": ["c"],

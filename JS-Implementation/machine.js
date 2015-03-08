@@ -9,27 +9,23 @@ var _ = require("underscore");
 
 // Import machine definitions from JSON, including inputs at the last.
 // A sample DFA:
-// var defM = require('./Definitions/machine_def.json');
+// var defM = require('./definitions/machine_def.json');
 // For DFA minimization algorithm:
-// var defM = require('./Definitions/DFAtoMin1.json');
-// var defM = require('./Definitions/DFAtoMin2.json');
-// ex 4.4.1
-// var defM = require('./Definitions/DFAtoMin3.json');
-// ex 4.4.2
-// var defM = require('./Definitions/DFAtoMin4.json');
-// ex 3.2.1
-// var defM = require('./Definitions/machine_3_2_1.json');
-// ex 3.2.2
-// var defM = require('./Definitions/machine_3_2_2.json');
-// var defM = require('./Definitions/minDFA.json');
-// var defM = require('./Definitions/minDFA_4_4_1.json');
-// var defM = require('./Definitions/minDFA_4_4_2.json');
-// var defM = require('./Definitions/minDFA_3_2_1.json');
-// var defM = require('./Definitions/minDFA_3_2_2.json');
+// var defM = require('./definitions/DFA_4_18.json');
+// var defM = require('./definitions/DFA_4_21.json');
+// var defM = require('./definitions/DFA_4_4_1.json');
+// var defM = require('./definitions/DFA_4_4_2.json');
+// var defM = require('./definitions/DFA_3_2_1.json');
+// var defM = require('./definitions/DFA_3_2_2.json');
+// var defM = require('./definitions/minDFA.json');
+// var defM = require('./definitions/minDFA_4_4_1.json');
+// var defM = require('./definitions/minDFA_4_4_2.json');
+// var defM = require('./definitions/minDFA_3_2_1.json');
+// var defM = require('./definitions/minDFA_3_2_2.json');
 
-var defM = require('./Definitions/tm-def.json');
-// var defM = require('./Definitions/tm-def2.json');
-// var defM = require('./Definitions/tm-def3.json');
+// var defM = require('./definitions/TM-0power.json');
+var defM = require('./definitions/TM-repeat.json');
+// var defM = require('./definitions/TM-nondeter.json');
 
 
 ////////////////////////
@@ -181,12 +177,3 @@ var compute = function(i) {
 
 computeAll();
 
-// convertDFAtoTM();
-// compute(1);
-// compute(3);
-
-// var arr = [1,2,3];
-
-// console.log(arr);
-// console.log(arr.unshift(defM.B));
-// console.log(arr);
