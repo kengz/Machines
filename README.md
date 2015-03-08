@@ -18,7 +18,7 @@ For the `JS` implementation, simply build and run as usual: type into terminal `
 3. `DFA-minimizer.js` to construct and equivalent, minimal DFA from the table above.
 
 
-The `Java` implementation is deprecated. If u insist to run it, type into terminal:
+The `Java` implementation is deprecated. If you insist to run it, type into terminal:
 ```
 make < inputN1.txt
 ```
