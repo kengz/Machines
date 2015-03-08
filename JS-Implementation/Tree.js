@@ -344,7 +344,7 @@ Tree.prototype.expandEChild = function(child) {
 Tree.prototype.printTree = function() {
 	// Tell format for TM
 	if (this.Mclass == 'TM') {
-		console.log("Printing Tree, config: <state> <head-pos> <tape>\n");
+		console.log("Printing Tree, config format:\n");
 	}
 	// Format for DFA/NFA
 	else if (this.Mclass == 'DFA' || this.Mclass == "NFA") {
