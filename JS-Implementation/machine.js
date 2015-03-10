@@ -8,8 +8,6 @@
 var _ = require("underscore");
 
 // Import machine definitions from JSON, including inputs at the last.
-// A sample DFA:
-// var defM = require('./definitions/machine_def.json');
 // For DFA minimization algorithm:
 // var defM = require('./definitions/DFA_4_18.json');
 // var defM = require('./definitions/DFA_4_21.json');
@@ -22,6 +20,7 @@ var _ = require("underscore");
 // var defM = require('./definitions/minDFA_4_4_2.json');
 // var defM = require('./definitions/minDFA_3_2_1.json');
 // var defM = require('./definitions/minDFA_3_2_2.json');
+// var defM = require('./definitions/NFA_1_38.json');
 
 // var defM = require('./definitions/TM-0power.json');
 // var defM = require('./definitions/TM-repeat.json');
@@ -54,16 +53,16 @@ F = defM.F;
 // The tape symbol, union with S
 T = _.union(S, defM.T, [defM.B]);
 // The blank symbol, in T
-B = defM.B;
+B = defM.B == undefined ? '_' : defM.B ;
 // The start state
 q0 = defM.q0;
 // The delta transition function
 delta = defM.delta;
 
 
-///////////////////
-// modifications //
-///////////////////
+////////////////////
+// Delta function //
+////////////////////
 
 // Non-deterministic delta transition function
 // Return: "oe" for empty set(dead state)
@@ -100,6 +99,10 @@ var d = function(q, s) {
     return nd(q, s, 0);
 };
 
+
+//////////////////////
+// Migrate out soon //
+//////////////////////
 
 // Convert DFA into TM, copy; don't override
 // construct a new minimized DFA by changing a copy of defM and saving it
@@ -138,10 +141,14 @@ var input = defM.inputs;
 // Import the Tree
 var t = require('./Tree.js');
 
-var PDAtoTM = require('./PDA-converter.js').run;
+// var PDAtoTM = require('./PDA-converter.js').run;
 
 // Compute all input strings
 var computeAll = function() {
+    ////////////////////////////////
+    // move convertion up earlier //
+    ////////////////////////////////
+
     // if is DFA or NFA, convert to TM, then export def
     if (Mclass == 'DFA' || Mclass == 'NFA') {
         convertDFAtoTM();
@@ -160,27 +167,15 @@ var computeAll = function() {
 
 // function to compute one input
 var compute = function(i) {
+    var max = 500;
     // init new tree
     var m1 = new t.Tree(Mclass, q0, input[i]);
     console.log("Tape: " + input[i]);
     console.log("Machine computing...\n");
 
-    m1.compute();
+    m1.compute(max);
     m1.printTree();
-
-    // Check for accept states in the lowest level of tree = forefront
-    var accepts = _.intersection(m1.forefront, F);
-    console.log("Tape: " + input[i]);
-    console.log("Forefront: " + _.uniq(m1.forefront));
-    if (accepts.length > 0) {
-        console.log("Accepted states: " + accepts);
-        console.log("======Accept.======\n\n");
-    } else {
-        console.log("======Reject.======\n\n");
-    }
-
-
-    console.log("tree size ", m1.size());
+    m1.report();
 
 };
 

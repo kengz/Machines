@@ -64,10 +64,15 @@ Node.prototype.printHere = function(Mclass) {
 		this.indent();
 		console.log(this.state);
 	} 
+	// format for PDA
 	else if (Mclass == 'PDA') {
-		this.indent();
-		this.tape.splice(this.head, 0, this.state);
-		console.log(this.tape.join());
+		// print only the non-TM-transtition state, i.e. not q1,a,...
+		// They are the state without indices and ','
+		if (this.state.split(',').length == 1) {
+			// this.indent();
+			this.tape.splice(this.head, 0, this.state);
+			console.log(this.tape.join());
+		};
 	}
 
 }
@@ -115,9 +120,11 @@ function Tree(Mclass, state, tapeinput) {
 	console.log("-------", Mclass, "-------");
 
 	// the sentinel for halting compute()
-	this.halter = undefined;
+	this.halted = undefined;
+	this.accepted = undefined;
 
 	// parse the tape input into array
+	this.tapeinput = tapeinput;
 	this.tape = this.parseTape(tapeinput);
 
 	// initialize tree
@@ -133,21 +140,21 @@ Tree.prototype.parseTape = function(tapeinput) {
 	_.each(tapeinput, function(s) {
 		tape.push(s);
 	});
+	// for PDA: push stack marker into tape
 	if (this.Mclass == 'PDA') {
-		tape.push('Z');
+		tape.push(defM.Z);
 	};
 	console.log("parsed tape: ", tape);
 	return tape;
 }
-
+// Size of tree: total number of nodes
 Tree.prototype.size = function() {
 	return this.root.sizeOf();
 }
 // TM: compute, either till halting configs, or till maxStep
-Tree.prototype.compute = function() {
+Tree.prototype.compute = function(max) {
 	// The max steps before halting
-	// var maxStep = 50;
-	var maxStep = 500;
+	var maxStep = max;
 
 	///////////////////////////
 	// add parent for root? //
@@ -159,18 +166,15 @@ Tree.prototype.compute = function() {
 	// either loop till maxStep, or terminate in undefined = reject, or accept
 	while (maxStep > 0) {
 		maxStep--;
-		console.log("now maxStep remains, next reset forefront, ", maxStep);
 		// reset forefront and 
 		this.forefront = [];
 		// expand next depth of tree, calls halt() if reaches halting config
 		this.oneStep(this.root);
 		this.treeDepth++;
-		// console.log("halter is: ", this.halter);
 
 		// if found halting state, halt() called in expand(), break loop
-		if ( this.halter != undefined ) {
-			console.log("Computation halts: ");
-			console.log(this.halter);
+		if ( this.halted != undefined ) {
+			console.log("Computation halts. ");
 			break;
 		};
 		// else keep looping till limit is reached
@@ -178,30 +182,27 @@ Tree.prototype.compute = function() {
 
 	// if stops when exceeds maxStep, then TM might be looping
 	if (maxStep == 0) {
-		console.log("maxSteps exceeded. TM instance probably doesn't halt");
+		console.log("maxSteps exceeded. TM might not halt");
 	};
 }
 
 
 // One step in TM to yield next config(with non-determinism): read, write, move
 Tree.prototype.oneStep = function(node) {
-	// console.log("onestepping, dep", node.depth, this.treeDepth);
-	// console.log("tape", node.head, node.tape);
 	// travel down till the right depth to expand from the node
 	if (node.depth === this.treeDepth) {
 
 		// old state and head location
 		var q = node.state;
 		var h = node.head;
+
 		// 1. Read from tape
 		var s = this.Read(node);
 		// If config yields valid delta, the add children by non-determinism
 		// NOT executed if nd(q,s) is invalid – halt machine below.
-		console.log("call ndOut: ", q,s, "nd len: ", nd(q,s).length);
 		for (var i = 0; i < nd(q,s).length; i++) {
 			// get the output triple {state, write, move}
 			var ndOut = nd(q,s,i);
-			console.log("inloop");
 
 			// 2. Write
 			var tape = this.Write(node, ndOut);
@@ -210,7 +211,6 @@ Tree.prototype.oneStep = function(node) {
 
 			// Add child with new config to node
 			this.Expand(node, config);
-
 		};
 		// 4. Finally, halt at this node if necessary
 		this.TryHalt(q,s,h, node);
@@ -225,13 +225,13 @@ Tree.prototype.oneStep = function(node) {
 }
 
 
+// Unchanged machine methods for TM. Restriction reflected in defM
 
 // 1. Read: called once even in non-determinism
 Tree.prototype.Read = function(node) {
 	// read tape symbol at head
 	return node.tape[node.head];
 }
-// for PDA, simply add a write Stack method, and read from stack too
 
 // 2. Write: can be called as many times as needed in non-determinism
 Tree.prototype.Write = function(node, ndOut) {
@@ -292,11 +292,11 @@ Tree.prototype.TryHalt = function(q,s,h, node) {
 	if (this.Mclass == 'TM') {
 		// If this node outputs deadstate 'oe', reject 
 		if (nd(q,s).state == 'oe') {
-			this.halt("TM rejects.");
+			this.halt(0, "TM rejects.");
 		} 
 		// or in the forloop above, forefront has accept state, accept
 		else if ( !_.isEmpty( _.intersection(defM.F, this.forefront) ) ) {
-			this.halt("TM accepts.");
+			this.halt(1, "TM accepts.");
 		}
 	};
 
@@ -304,28 +304,60 @@ Tree.prototype.TryHalt = function(q,s,h, node) {
 	if (this.Mclass == 'DFA' || this.Mclass == 'NFA') {
 		// if header moves past the last tape symbol
 		if ( h == this.tape.length ) {
-			this.halt("Stops at tape end.");
+			if ( !_.isEmpty( _.intersection(defM.F, this.forefront) ) ) {
+				this.halt(1, "DFA/NFA accepts.")
+			}
+			else {
+				this.halt(0, "DFA/NFA rejects.");
+			}
+			// this.halt("Stops at tape end.");
 		}
 	};
 
-
+	// PDA halting: if all of input tape processed(pro).
 	if (this.Mclass == 'PDA') {
 		var pro = 0;
 		_.each(node.tape, function(e) {
 			if (e == 'x') pro++;
 		});
-		console.log(this.root.tape.length);
+		// original tape length, discount stack top
 		if (pro == this.root.tape.length-1) {
-			console.log("pro is, ", pro, node.tape);
-			this.forefront.push(node.state);
-			this.halt("Stop at depth");
+			// Halt on processing all input
+			this.halt(0, "Stop at tape end.");
+			// if accept by state, then reset message
+			if (_.contains(defM.F, node.state)) {
+				this.forefront.push(node.state);
+				this.halt(1, "Accept via state.");
+			}
+			// accept with empty stack
+			else if (this.tape[node.head+1] == defM.B){
+				this.halt(1, "Accept via empty stack");
+			}
 		}
 	};
 }
 
+// Report after halting
+Tree.prototype.report = function() {
+	console.log();
+	console.log("Tape: " + this.tapeinput);
+	console.log("Tree size:", this.size());
+	console.log("Forefront: " + _.uniq(this.forefront));
+	var accepts = _.intersection(this.forefront, defM.F);
+    console.log("Accepted states: " + accepts);
+    console.log(this.halted);
+
+    if (this.accepted == 1) {
+        console.log("======Accept.======\n\n");
+    } else {
+        console.log("======Reject.======\n\n");
+    }
+}
+
 // Halt the TM with the result
-Tree.prototype.halt = function(result) {
-	this.halter = result;
+Tree.prototype.halt = function(accept, result) {
+	this.accepted = accept;
+	this.halted = result;
 }
 
 
@@ -333,14 +365,10 @@ Tree.prototype.halt = function(result) {
 Tree.prototype.Expand = function(node, config) {
 	var r = config.state; var h = config.head; var t = config.tape;
 	var child = node.addChild(r, h, t);
-	// console.log("forcibly push forefront with ", r);
-	// this.forefront.push(r);
 	
 	// If child isn't dead state, add to forefront
 	if (child != null) {
-		console.log("pushign to forefront");
 		this.forefront.push(child.state);
-		console.log("forefront, ", this.forefront);
 		// An epsilon move: expand parallel in tree
 		this.expandEChild(child);
 	}
@@ -378,7 +406,7 @@ Tree.prototype.expandEChild = function(child) {
 			this.forefront.push(eChild.state);
 
 			// recurse as needed
-			// this.expandEChild(eChild);
+			this.expandEChild(eChild);
 		}
 	}
 }
@@ -394,8 +422,9 @@ Tree.prototype.printTree = function() {
 	else if (this.Mclass == 'DFA' || this.Mclass == "NFA") {
 		console.log("Printing Tree: input-symbol> & result-state\n");
 	}
+	// Format for PDA
 	else if (this.Mclass == 'PDA') {
-		console.log("Printing Tree, config format:\n");
+		console.log("Printing Tree, config format with stack:\n");
 	}
 	// print according to machine class
 	this.root.preOrder( this.Mclass );
