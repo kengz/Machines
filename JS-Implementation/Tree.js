@@ -64,6 +64,11 @@ Node.prototype.printHere = function(Mclass) {
 		this.indent();
 		console.log(this.state);
 	} 
+	else if (Mclass == 'PDA') {
+		this.indent();
+		this.tape.splice(this.head, 0, this.state);
+		console.log(this.tape.join());
+	}
 
 }
 // Print the tree breadth-first. Mclass = machine class, to choose format
@@ -117,7 +122,6 @@ function Tree(Mclass, state, tapeinput) {
 
 	// initialize tree
 	this.root = new Node(state, 0, this.tape),
-	this.treeDepth = 0,
 	forefront = []
 }
 
@@ -128,6 +132,10 @@ Tree.prototype.parseTape = function(tapeinput) {
 	_.each(tapeinput, function(s) {
 		tape.push(s);
 	});
+	if (this.Mclass == 'PDA') {
+		tape.push('Z0');
+	};
+	console.log("parsed tape: ", tape);
 	return tape;
 }
 
@@ -174,6 +182,7 @@ Tree.prototype.oneStep = function(node) {
 		var s = this.Read(node);
 		// If config yields valid delta, the add children by non-determinism
 		// NOT executed if nd(q,s) is invalid – halt machine below.
+		console.log("call ndOut: ", q,s);
 		for (var i = 0; i < nd(q,s).length; i++) {
 			// get the output triple {state, write, move}
 			var ndOut = nd(q,s,i);
@@ -221,6 +230,7 @@ Tree.prototype.Write = function(node, ndOut) {
 		
 	// then write to it at head
 	tape[h] = ndOut.write;
+	console.log("written tape: ", tape);
 	// return the new tape
 	return tape;
 }
@@ -281,6 +291,12 @@ Tree.prototype.TryHalt = function(q,s,h) {
 			this.halt("Stops at tape end.");
 		}
 	};
+
+	if (this.Mclass == 'PDA') {
+		if (this.tape[h] == 'Z0') {
+			this.halt("Stop at stack");
+		}
+	}
 }
 
 // Halt the TM with the result
@@ -349,7 +365,10 @@ Tree.prototype.printTree = function() {
 	// Format for DFA/NFA
 	else if (this.Mclass == 'DFA' || this.Mclass == "NFA") {
 		console.log("Printing Tree: input-symbol> & result-state\n");
-	};
+	}
+	else if (this.Mclass == 'PDA') {
+		console.log("Printing Tree, config format:\n");
+	}
 	// print according to machine class
 	this.root.preOrder( this.Mclass );
 }

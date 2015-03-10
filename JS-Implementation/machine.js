@@ -26,7 +26,9 @@ var _ = require("underscore");
 // var defM = require('./definitions/TM-0power.json');
 // var defM = require('./definitions/TM-repeat.json');
 // var defM = require('./definitions/TM-nondeter.json');
-var defM = require('./definitions/TM-palindrome.json');
+// var defM = require('./definitions/TM-palindrome.json');
+
+var defM = require('./definitions/newPDA.json');
 
 
 ////////////////////////
@@ -161,8 +163,8 @@ var compute = function(i) {
     // Check for accept states in the lowest level of tree = forefront
     var accepts = _.intersection(m1.forefront, F);
     console.log("Tape: " + input[i]);
+    console.log("Forefront: " + _.uniq(m1.forefront));
     if (accepts.length > 0) {
-        console.log("Forefront: " + _.uniq(m1.forefront));
         console.log("Accepted states: " + accepts);
         console.log("======Accept.======\n\n");
     } else {
