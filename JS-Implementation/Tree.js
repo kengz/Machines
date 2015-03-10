@@ -26,7 +26,7 @@ function Node(state, head, tape) {
 // Return the size of the tree under this node
 Node.prototype.sizeOf = function() {
 	var s = _.size(this.children);
-	_.each(this.children, function(){ s += sizeOf(); } );
+	_.each(this.children, function(e){ s += e.sizeOf(); } );
 	return s;
 }
 // Check if this node is a leaf
@@ -122,6 +122,7 @@ function Tree(Mclass, state, tapeinput) {
 
 	// initialize tree
 	this.root = new Node(state, 0, this.tape),
+	this.treeDepth = 0;
 	forefront = []
 }
 
@@ -133,20 +134,32 @@ Tree.prototype.parseTape = function(tapeinput) {
 		tape.push(s);
 	});
 	if (this.Mclass == 'PDA') {
-		tape.push('Z0');
+		tape.push('Z');
 	};
 	console.log("parsed tape: ", tape);
 	return tape;
 }
 
+Tree.prototype.size = function() {
+	return this.root.sizeOf();
+}
 // TM: compute, either till halting configs, or till maxStep
 Tree.prototype.compute = function() {
 	// The max steps before halting
-	var maxStep = 50;
+	// var maxStep = 50;
+	var maxStep = 500;
+
+	///////////////////////////
+	// add parent for root? //
+	///////////////////////////
+	
+	// var rootChild = new Node(this.root.state, 0, this.root.tape);
+	// this.root.addChild(rootChild);
 	
 	// either loop till maxStep, or terminate in undefined = reject, or accept
 	while (maxStep > 0) {
 		maxStep--;
+		console.log("now maxStep remains, next reset forefront, ", maxStep);
 		// reset forefront and 
 		this.forefront = [];
 		// expand next depth of tree, calls halt() if reaches halting config
@@ -172,20 +185,23 @@ Tree.prototype.compute = function() {
 
 // One step in TM to yield next config(with non-determinism): read, write, move
 Tree.prototype.oneStep = function(node) {
+	// console.log("onestepping, dep", node.depth, this.treeDepth);
+	// console.log("tape", node.head, node.tape);
 	// travel down till the right depth to expand from the node
 	if (node.depth === this.treeDepth) {
+
 		// old state and head location
 		var q = node.state;
 		var h = node.head;
-
 		// 1. Read from tape
 		var s = this.Read(node);
 		// If config yields valid delta, the add children by non-determinism
 		// NOT executed if nd(q,s) is invalid – halt machine below.
-		console.log("call ndOut: ", q,s);
+		console.log("call ndOut: ", q,s, "nd len: ", nd(q,s).length);
 		for (var i = 0; i < nd(q,s).length; i++) {
 			// get the output triple {state, write, move}
 			var ndOut = nd(q,s,i);
+			console.log("inloop");
 
 			// 2. Write
 			var tape = this.Write(node, ndOut);
@@ -197,7 +213,7 @@ Tree.prototype.oneStep = function(node) {
 
 		};
 		// 4. Finally, halt at this node if necessary
-		this.TryHalt(q,s,h);
+		this.TryHalt(q,s,h, node);
 	}
 
 	// recursive call till the correct depth
@@ -227,10 +243,10 @@ Tree.prototype.Write = function(node, ndOut) {
 	// if is epsilon, reverse one-step
 	if (node.epsilon)
 		h--;
-		
+
 	// then write to it at head
 	tape[h] = ndOut.write;
-	console.log("written tape: ", tape);
+	// console.log("written tape: ", tape);
 	// return the new tape
 	return tape;
 }
@@ -271,7 +287,7 @@ Tree.prototype.Move = function(node, ndOut, tape) {
 }
 
 // 4. Halt the TM if necessary
-Tree.prototype.TryHalt = function(q,s,h) {
+Tree.prototype.TryHalt = function(q,s,h, node) {
 	// TM halting:
 	if (this.Mclass == 'TM') {
 		// If this node outputs deadstate 'oe', reject 
@@ -292,11 +308,19 @@ Tree.prototype.TryHalt = function(q,s,h) {
 		}
 	};
 
+
 	if (this.Mclass == 'PDA') {
-		if (this.tape[h] == 'Z0') {
-			this.halt("Stop at stack");
+		var pro = 0;
+		_.each(node.tape, function(e) {
+			if (e == 'x') pro++;
+		});
+		console.log(this.root.tape.length);
+		if (pro == this.root.tape.length-1) {
+			console.log("pro is, ", pro, node.tape);
+			this.forefront.push(node.state);
+			this.halt("Stop at depth");
 		}
-	}
+	};
 }
 
 // Halt the TM with the result
@@ -309,10 +333,14 @@ Tree.prototype.halt = function(result) {
 Tree.prototype.Expand = function(node, config) {
 	var r = config.state; var h = config.head; var t = config.tape;
 	var child = node.addChild(r, h, t);
+	// console.log("forcibly push forefront with ", r);
+	// this.forefront.push(r);
 	
 	// If child isn't dead state, add to forefront
 	if (child != null) {
+		console.log("pushign to forefront");
 		this.forefront.push(child.state);
+		console.log("forefront, ", this.forefront);
 		// An epsilon move: expand parallel in tree
 		this.expandEChild(child);
 	}
@@ -350,7 +378,7 @@ Tree.prototype.expandEChild = function(child) {
 			this.forefront.push(eChild.state);
 
 			// recurse as needed
-			this.expandEChild(eChild);
+			// this.expandEChild(eChild);
 		}
 	}
 }

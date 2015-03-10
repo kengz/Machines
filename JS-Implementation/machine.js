@@ -29,6 +29,7 @@ var _ = require("underscore");
 // var defM = require('./definitions/TM-palindrome.json');
 
 var defM = require('./definitions/newPDA.json');
+// var defM = require('./definitions/PDA-6_1_1.json');
 
 
 ////////////////////////
@@ -137,12 +138,19 @@ var input = defM.inputs;
 // Import the Tree
 var t = require('./Tree.js');
 
+var PDAtoTM = require('./PDA-converter.js').run;
+
 // Compute all input strings
 var computeAll = function() {
     // if is DFA or NFA, convert to TM, then export def
     if (Mclass == 'DFA' || Mclass == 'NFA') {
         convertDFAtoTM();
-    }
+    };
+    // if is PDA, convert
+    if (Mclass == 'PDA') {
+        // include in the right sequence
+        // PDAtoTM();
+    };
     // compute for all input
     for (var i = 0; i < input.length; i++) {
         compute(i);
@@ -170,6 +178,9 @@ var compute = function(i) {
     } else {
         console.log("======Reject.======\n\n");
     }
+
+
+    console.log("tree size ", m1.size());
 
 };
 
