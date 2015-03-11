@@ -69,7 +69,10 @@ Node.prototype.printHere = function(Mclass) {
 		// print only the non-TM-transtition state, i.e. not q1,a,...
 		// They are the state without indices and ','
 		if (this.state.split(',').length == 1) {
-			// this.indent();
+			// indent for each marked input
+			_.each(this.tape, function(e) {
+				if (e == 'x') process.stdout.write("  ");
+			});
 			this.tape.splice(this.head, 0, this.state);
 			console.log(this.tape.join());
 		};
@@ -386,8 +389,8 @@ Tree.prototype.TryHalt = function(q,s,h, node) {
 				this.forefront.push(node.state);
 				this.halt(1, "Accept via state.");
 			}
-			// accept with empty stack
-			else if (this.tape[node.head+1] == defM.B){
+			// or accept with empty stack
+			else if (node.tape[node.head+1] == defM.B){
 				this.halt(1, "Accept via empty stack");
 			}
 		}
@@ -401,14 +404,14 @@ Tree.prototype.report = function() {
 	console.log("Tree size:", this.size());
 	console.log("Forefront: " + _.uniq(this.forefront));
 	var accepts = _.intersection(this.forefront, defM.F);
-    console.log("Accepted states: " + accepts);
-    console.log(this.halted);
+	console.log("Accepted states: " + accepts);
+	console.log(this.halted);
 
-    if (this.accepted == 1) {
-        console.log("======Accept.======\n\n");
-    } else {
-        console.log("======Reject.======\n\n");
-    }
+	if (this.accepted == 1) {
+		console.log("======Accept.======\n\n");
+	} else {
+		console.log("======Reject.======\n\n");
+	}
 }
 
 // Halt the TM with the result
