@@ -9,9 +9,9 @@ var machine = require('./machine.js');
 var nd = machine.nd;
 var d = machine.d;
 
-var Q = machine.defM.Q;
-var S = machine.defM.S;
-var F = machine.defM.F;
+var Q = machine.rawdefM.Q;
+var S = machine.rawdefM.S;
+var F = machine.rawdefM.F;
 
 
 

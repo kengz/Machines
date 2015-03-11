@@ -2,10 +2,10 @@
 
 // for array manipulation
 var _ = require('underscore');
-// Import the delta and definitions from machine
-var delta = require('./machine.js');
-var nd = delta.nd;
-var defM = delta.defM;
+// Dependencies: Import the delta and definitions from machine
+var machine = require('./machine.js');
+var nd = machine.nd;
+var defM = machine.defM;
 
 
 ////////////////////
@@ -54,7 +54,7 @@ Node.prototype.printHere = function(Mclass) {
 	}
 
 	// format for DFA/NFA
-	else if (Mclass == 'DFA' || Mclass == "NFA") {
+	else if (Mclass == 'DFA' || Mclass == 'NFA') {
 		// print tape symbol for non-starting states
 		if (this.head > 0) {
 			this.indent();
@@ -113,11 +113,12 @@ Node.prototype.skip = function() { return this.epsilon = true; }
 ////////////////////
 
 // Construct tree with root. reset machine, new tape = starting config
-function Tree(Mclass, state, tapeinput) {
+function Tree(tapeinput) {
+	console.log(defM.F);
 	// The machine class: TM or DFA or etc
-	this.Mclass = Mclass;
+	this.Mclass = defM.class;
 	console.log("Constructed machine:");
-	console.log("-------", Mclass, "-------");
+	console.log("-------", this.Mclass, "-------");
 
 	// the sentinel for halting compute()
 	this.halted = undefined;
@@ -128,7 +129,7 @@ function Tree(Mclass, state, tapeinput) {
 	this.tape = this.parseTape(tapeinput);
 
 	// initialize tree
-	this.root = new Node(state, 0, this.tape),
+	this.root = new Node(defM.q0, 0, this.tape),
 	this.treeDepth = 0;
 	forefront = []
 }
@@ -151,10 +152,8 @@ Tree.prototype.parseTape = function(tapeinput) {
 Tree.prototype.size = function() {
 	return this.root.sizeOf();
 }
-// TM: compute, either till halting configs, or till maxStep
-Tree.prototype.compute = function(max) {
-	// The max steps before halting
-	var maxStep = max;
+// TM: compute, either till halting configs, or till maxStep before halting
+Tree.prototype.compute = function(maxStep) {
 
 	///////////////////////////
 	// add parent for root? //
@@ -164,12 +163,12 @@ Tree.prototype.compute = function(max) {
 	// this.root.addChild(rootChild);
 	
 	// either loop till maxStep, or terminate in undefined = reject, or accept
-	while (maxStep > 0) {
-		maxStep--;
+	while (this.treeDepth < maxStep) {
 		// reset forefront and 
 		this.forefront = [];
 		// expand next depth of tree, calls halt() if reaches halting config
 		this.oneStep(this.root);
+		// console.log("are you pushing? ", this.forefront);
 		this.treeDepth++;
 
 		// if found halting state, halt() called in expand(), break loop
@@ -181,7 +180,7 @@ Tree.prototype.compute = function(max) {
 	}
 
 	// if stops when exceeds maxStep, then TM might be looping
-	if (maxStep == 0) {
+	if (this.treeDepth == maxStep) {
 		console.log("maxSteps exceeded. TM might not halt");
 	};
 }
@@ -212,6 +211,7 @@ Tree.prototype.oneStep = function(node) {
 			// Add child with new config to node
 			this.Expand(node, config);
 		};
+
 		// 4. Finally, halt at this node if necessary
 		this.TryHalt(q,s,h, node);
 	}
@@ -286,79 +286,6 @@ Tree.prototype.Move = function(node, ndOut, tape) {
 	}
 }
 
-// 4. Halt the TM if necessary
-Tree.prototype.TryHalt = function(q,s,h, node) {
-	// TM halting:
-	if (this.Mclass == 'TM') {
-		// If this node outputs deadstate 'oe', reject 
-		if (nd(q,s).state == 'oe') {
-			this.halt(0, "TM rejects.");
-		} 
-		// or in the forloop above, forefront has accept state, accept
-		else if ( !_.isEmpty( _.intersection(defM.F, this.forefront) ) ) {
-			this.halt(1, "TM accepts.");
-		}
-	};
-
-	// DFA/NFA halting: after the last tape symbol
-	if (this.Mclass == 'DFA' || this.Mclass == 'NFA') {
-		// if header moves past the last tape symbol
-		if ( h == this.tape.length ) {
-			if ( !_.isEmpty( _.intersection(defM.F, this.forefront) ) ) {
-				this.halt(1, "DFA/NFA accepts.")
-			}
-			else {
-				this.halt(0, "DFA/NFA rejects.");
-			}
-			// this.halt("Stops at tape end.");
-		}
-	};
-
-	// PDA halting: if all of input tape processed(pro).
-	if (this.Mclass == 'PDA') {
-		var pro = 0;
-		_.each(node.tape, function(e) {
-			if (e == 'x') pro++;
-		});
-		// original tape length, discount stack top
-		if (pro == this.root.tape.length-1) {
-			// Halt on processing all input
-			this.halt(0, "Stop at tape end.");
-			// if accept by state, then reset message
-			if (_.contains(defM.F, node.state)) {
-				this.forefront.push(node.state);
-				this.halt(1, "Accept via state.");
-			}
-			// accept with empty stack
-			else if (this.tape[node.head+1] == defM.B){
-				this.halt(1, "Accept via empty stack");
-			}
-		}
-	};
-}
-
-// Report after halting
-Tree.prototype.report = function() {
-	console.log();
-	console.log("Tape: " + this.tapeinput);
-	console.log("Tree size:", this.size());
-	console.log("Forefront: " + _.uniq(this.forefront));
-	var accepts = _.intersection(this.forefront, defM.F);
-    console.log("Accepted states: " + accepts);
-    console.log(this.halted);
-
-    if (this.accepted == 1) {
-        console.log("======Accept.======\n\n");
-    } else {
-        console.log("======Reject.======\n\n");
-    }
-}
-
-// Halt the TM with the result
-Tree.prototype.halt = function(accept, result) {
-	this.accepted = accept;
-	this.halted = result;
-}
 
 
 // Add a new child with config to node, along with epsilon-expansions
@@ -411,6 +338,82 @@ Tree.prototype.expandEChild = function(child) {
 	}
 }
 
+// 4. Halt the TM if necessary
+Tree.prototype.TryHalt = function(q,s,h, node) {
+	// TM halting:
+	if (this.Mclass === 'TM') {
+		// or in the forloop above, forefront has accept state, accept
+		if ( !_.isEmpty( _.intersection(defM.F, this.forefront) ) ) {
+			this.halt(1, "TM accepts.");
+		}
+		// If this node outputs deadstate 'oe', reject 
+		else if (nd(q,s).state == 'oe') {
+			this.halt(0, "TM rejects.");
+		} 
+		
+	}
+
+	// DFA/NFA halting: after the last tape symbol
+	else if (this.Mclass === 'DFA' || this.Mclass == 'NFA') {
+		// if header moves past the last tape symbol
+		if ( h == this.tape.length - 1 ) {
+			if ( !_.isEmpty( _.intersection(defM.F, this.forefront) ) ) {
+				this.halt(1, "DFA/NFA accepts.")
+			}
+			else {
+				this.halt(0, "DFA/NFA rejects.");
+			}
+			// this.halt("Stops at tape end.");
+		}
+	}
+
+	// PDA halting: if all of input tape processed(pro).
+	else if (this.Mclass == 'PDA') {
+		// see number of processed input, marked 'x'
+		var pro = 0;
+		_.each(node.tape, function(e) {
+			if (e == 'x') pro++;
+		});
+		// original tape length, discount stack top
+		if (pro == this.root.tape.length-1) {
+			// Halt on processing all input
+			this.halt(0, "Stop at tape end.");
+			// if accept by state, then reset message
+			if (_.contains(defM.F, node.state)) {
+				this.forefront.push(node.state);
+				this.halt(1, "Accept via state.");
+			}
+			// accept with empty stack
+			else if (this.tape[node.head+1] == defM.B){
+				this.halt(1, "Accept via empty stack");
+			}
+		}
+	}
+}
+
+// Report after halting
+Tree.prototype.report = function() {
+	console.log();
+	console.log("Tape: " + this.tapeinput);
+	console.log("Tree size:", this.size());
+	console.log("Forefront: " + _.uniq(this.forefront));
+	var accepts = _.intersection(this.forefront, defM.F);
+    console.log("Accepted states: " + accepts);
+    console.log(this.halted);
+
+    if (this.accepted == 1) {
+        console.log("======Accept.======\n\n");
+    } else {
+        console.log("======Reject.======\n\n");
+    }
+}
+
+// Halt the TM with the result
+Tree.prototype.halt = function(accept, result) {
+	this.accepted = accept;
+	this.halted = result;
+}
+
 
 // Print the tree
 Tree.prototype.printTree = function() {
@@ -419,7 +422,7 @@ Tree.prototype.printTree = function() {
 		console.log("Printing Tree, config format:\n");
 	}
 	// Format for DFA/NFA
-	else if (this.Mclass == 'DFA' || this.Mclass == "NFA") {
+	else if (this.Mclass == 'DFA' || this.Mclass == 'NFA') {
 		console.log("Printing Tree: input-symbol> & result-state\n");
 	}
 	// Format for PDA
