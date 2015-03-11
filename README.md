@@ -1,26 +1,33 @@
 # Machines
-A polymorphic implementation of the machines: `DFA, NFA, e-NFA, PDA, TM`.
+A polymorphic implementation of the machines: `DFA, NFA, e-NFA, PDA, TM, N-TM`.
 The design is object-oriented to show the machine functions, and to emphasize that the other machines are restrictions of the `non-deterministic Turing Machine (N-TM)`.
 
-`Updated Feb 27`
-Added a `JS` implementation based on the original `Java` version.
-
-`Updated Mar 7`
-Now it is polymorphic: All the other machines: `DFA, NFA, e-NFA, TM` are constructed as restrictions of the `non-deterministic TM`.
 
 ##Instructions
-For the `JS` implementation, simply build and run as usual: type into terminal `$ node <file>`, where *file* is:
+For the `JS` implementation:
 
-1. `machine.js` constructing machine, and specify the `require()` path on top to machine definitions, in the `Definitions` folder. Now you can build DFA, NFA, and TM from it, simply by changing the `JSON` file path specified at its top. Yes it is polymorphic – the same code builds all these different machines.
+Note that the machine definition (as `JSON` files, refer examples for format) is specified at the top in `machine.js`. This is where the machine is built, and exported for usage elsewhere.
 
-2. `DFA-distin-table.js` to run the algorithm for constructing the table of distinguishabilities for the machine created above.
+Simply build and run as usual: type into terminal `node <file>`, where *<file>* is:
 
-3. `DFA-minimizer.js` to construct and equivalent, minimal DFA from the table above.
+1. `machine.js` to construct a machine and compute input strings from the specified `JSON`. All machines: `DFA, NFA, e-NFA, PDA, TM` are polymorphic restrictions of a `nondeterministic Turing Machine`.
+
+2. `DFA-distin-table.js` to run the algorithm for constructing the table of distinguishabilities for DFA.
+
+3. `DFA-minimizer.js` to construct an equivalent, minimal DFA from the table above.
 
 
-The `Java` implementation is deprecated. If you insist to run it, type into terminal:
-```
-make < inputN1.txt
-```
+`converter.js` and `Tree.js` are helper classes for `machine.js`, and will be called within it. The former converts `DFA, NFA, e-NFA, PDA` into restrictions of `TM`; the latter gives the nondeterministic structure of `TM`.
 
-For documentation, refer to the `*.html` pages, generated with `Docco`.
+For detailed documentation, refer to the `*.html` pages, generated with `Docco`.
+
+
+## Versions
+`updated Mar 11`
+
+**`v0.3`**: Complete implementation of all machines: `DFA, NFA, e-NFA, PDA, TM` as restrictions of a `non-deterministic Turing Machine`.
+
+**`v0.2`**: Implemented `N-TM`, and then `DFA` and `NFA` as its restrictions.
+
+**`v0.1`**: Implemented `DFA` and `NFA`, with DFA minimizer and distin-table algorithm.
+
