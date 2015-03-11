@@ -35,6 +35,11 @@
                 </a>
               
                 
+                <a class="source" href="converter.html">
+                  converter.js
+                </a>
+              
+                
                 <a class="source" href="machine.html">
                   machine.js
                 </a>
@@ -73,12 +78,11 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-2">&#182;</a>
               </div>
-              <p>Import the delta from machine</p>
+              <p>for array manipulation</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> delta = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./machine.js'</span>);
-<span class="hljs-keyword">var</span> nd = delta.nd;</pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> _ = <span class="hljs-built_in">require</span>(<span class="hljs-string">'underscore'</span>);</pre></div></div>
             
         </li>
         
@@ -89,18 +93,13 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-3">&#182;</a>
               </div>
-              <p>The Node class constructor for Tree</p>
+              <p>Dependencies: Import the delta and definitions from machine</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">Node</span><span class="hljs-params">(state, symbol)</span> </span>{
-	<span class="hljs-keyword">this</span>.state = state,
-	<span class="hljs-keyword">this</span>.symbol = symbol,
-	<span class="hljs-keyword">this</span>.Parent = <span class="hljs-literal">null</span>,
-	<span class="hljs-keyword">this</span>.depth = <span class="hljs-number">0</span>,
-	<span class="hljs-keyword">this</span>.epsilon = <span class="hljs-literal">false</span>,
-	<span class="hljs-keyword">this</span>.children = []
-}</pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> machine = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./machine.js'</span>);
+<span class="hljs-keyword">var</span> nd = machine.nd;
+<span class="hljs-keyword">var</span> defM = machine.defM;</pre></div></div>
             
         </li>
         
@@ -111,15 +110,13 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-4">&#182;</a>
               </div>
-              <p>Return the size of the tree under this node</p>
+              <p>//////////////////
+The Node class //
+//////////////////</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>Node.prototype.sizeOf = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
-	<span class="hljs-keyword">var</span> s = _.size(<span class="hljs-keyword">this</span>.children);
-	_.each(<span class="hljs-keyword">this</span>.children, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span></span>{ s += sizeOf();} );
-	<span class="hljs-keyword">return</span> s;
-}</pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">Node</span><span class="hljs-params">(state, head, tape)</span> </span>{</pre></div></div>
             
         </li>
         
@@ -129,6 +126,61 @@
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <p>the triple in a TM config</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>	<span class="hljs-keyword">this</span>.state = state,
+	<span class="hljs-keyword">this</span>.head = head,
+	<span class="hljs-keyword">this</span>.tape = tape,</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <p>other fields for Tree</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>	<span class="hljs-keyword">this</span>.Parent = <span class="hljs-literal">null</span>,
+	<span class="hljs-keyword">this</span>.depth = <span class="hljs-number">0</span>,
+	<span class="hljs-keyword">this</span>.epsilon = <span class="hljs-literal">false</span>,
+	<span class="hljs-keyword">this</span>.children = []
+}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-7">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
+              <p>Return the size of the tree under this node</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Node.prototype.sizeOf = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+	<span class="hljs-keyword">var</span> s = _.size(<span class="hljs-keyword">this</span>.children);
+	_.each(<span class="hljs-keyword">this</span>.children, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span></span>{ s += e.sizeOf(); } );
+	<span class="hljs-keyword">return</span> s;
+}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-8">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-8">&#182;</a>
               </div>
               <p>Check if this node is a leaf</p>
 
@@ -141,11 +193,11 @@
         </li>
         
         
-        <li id="section-6">
+        <li id="section-9">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-6">&#182;</a>
+                <a class="pilcrow" href="#section-9">&#182;</a>
               </div>
               <p>Indentation for printing out the tree depth</p>
 
@@ -162,41 +214,172 @@
         </li>
         
         
-        <li id="section-7">
+        <li id="section-10">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-7">&#182;</a>
+                <a class="pilcrow" href="#section-10">&#182;</a>
               </div>
-              <p>Print an input and its resulting state</p>
+              <p>Print an input and its resulting state, with Mclass = machine class</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>Node.prototype.printHere = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
-	<span class="hljs-keyword">this</span>.indent();
-	<span class="hljs-built_in">console</span>.log(<span class="hljs-keyword">this</span>.symbol + <span class="hljs-string">"&gt;"</span>);
-	<span class="hljs-keyword">this</span>.indent();
-	<span class="hljs-built_in">console</span>.log(<span class="hljs-keyword">this</span>.state);
+            <div class="content"><div class='highlight'><pre>Node.prototype.printHere = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(Mclass)</span> </span>{</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-11">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-11">&#182;</a>
+              </div>
+              <p>format for TM: config triple</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>	<span class="hljs-keyword">if</span> (Mclass == <span class="hljs-string">'TM'</span>) {
+		<span class="hljs-keyword">this</span>.indent();</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-12">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-12">&#182;</a>
+              </div>
+              <p>console.log(this.state, this.head, this.tape.join());
+config convention: state on the left of head location.
+not splice returns elements removed.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>		<span class="hljs-keyword">this</span>.tape.splice(<span class="hljs-keyword">this</span>.head, <span class="hljs-number">0</span>, <span class="hljs-keyword">this</span>.state);
+		<span class="hljs-built_in">console</span>.log(<span class="hljs-keyword">this</span>.tape.join());
+	}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-13">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-13">&#182;</a>
+              </div>
+              <p>format for DFA/NFA</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>	<span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (Mclass == <span class="hljs-string">'DFA'</span> || Mclass == <span class="hljs-string">'NFA'</span>) {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-14">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-14">&#182;</a>
+              </div>
+              <p>print tape symbol for non-starting states</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>		<span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.head &gt; <span class="hljs-number">0</span>) {
+			<span class="hljs-keyword">this</span>.indent();
+			<span class="hljs-built_in">console</span>.log(<span class="hljs-keyword">this</span>.tape[<span class="hljs-keyword">this</span>.head-<span class="hljs-number">1</span>] + <span class="hljs-string">"&gt;"</span>);
+		};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-15">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-15">&#182;</a>
+              </div>
+              <p>then the state</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>		<span class="hljs-keyword">this</span>.indent();
+		<span class="hljs-built_in">console</span>.log(<span class="hljs-keyword">this</span>.state);
+	}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-16">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-16">&#182;</a>
+              </div>
+              <p>format for PDA</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>	<span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (Mclass == <span class="hljs-string">'PDA'</span>) {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-17">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-17">&#182;</a>
+              </div>
+              <p>print only the non-TM-transtition state, i.e. not q1,a,…
+They are the state without indices and ‘,’</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>		<span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.state.split(<span class="hljs-string">','</span>).length == <span class="hljs-number">1</span>) {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-18">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-18">&#182;</a>
+              </div>
+              <p>this.indent();</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>			<span class="hljs-keyword">this</span>.tape.splice(<span class="hljs-keyword">this</span>.head, <span class="hljs-number">0</span>, <span class="hljs-keyword">this</span>.state);
+			<span class="hljs-built_in">console</span>.log(<span class="hljs-keyword">this</span>.tape.join());
+		};
+	}
+
 }</pre></div></div>
             
         </li>
         
         
-        <li id="section-8">
+        <li id="section-19">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-8">&#182;</a>
+                <a class="pilcrow" href="#section-19">&#182;</a>
               </div>
-              <p>Print the tree breadth-first</p>
+              <p>Print the tree breadth-first. Mclass = machine class, to choose format</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>Node.prototype.preOrder = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
-	<span class="hljs-keyword">this</span>.printHere();
+            <div class="content"><div class='highlight'><pre>Node.prototype.preOrder = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(Mclass)</span> </span>{
+	<span class="hljs-keyword">this</span>.printHere(Mclass);
 	<span class="hljs-keyword">if</span> (!(<span class="hljs-keyword">this</span>.isLeaf())) {
 		<span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-keyword">this</span>.children.length; i++) {
-			<span class="hljs-keyword">this</span>.children[i].preOrder();
+			<span class="hljs-keyword">this</span>.children[i].preOrder(Mclass);
 		}
 	}
 }</pre></div></div>
@@ -204,11 +387,11 @@
         </li>
         
         
-        <li id="section-9">
+        <li id="section-20">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-9">&#182;</a>
+                <a class="pilcrow" href="#section-20">&#182;</a>
               </div>
               <p>Set the parent of this node (Epsilon nodes’ parents are its sibling)</p>
 
@@ -222,20 +405,48 @@
         </li>
         
         
-        <li id="section-10">
+        <li id="section-21">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-10">&#182;</a>
+                <a class="pilcrow" href="#section-21">&#182;</a>
               </div>
               <p>Add a child to this node due to an input</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>Node.prototype.addChild = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(state, symbol)</span> </span>{
-	<span class="hljs-keyword">if</span> (state == <span class="hljs-string">'oe'</span>) { <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>; }
-	<span class="hljs-keyword">else</span> {
-		<span class="hljs-keyword">var</span> child = <span class="hljs-keyword">new</span> Node(state, symbol);
+            <div class="content"><div class='highlight'><pre>Node.prototype.addChild = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(state, head, tape)</span> </span>{</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-22">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-22">&#182;</a>
+              </div>
+              <p>if this node is empty = dead, can’t have children</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>	<span class="hljs-keyword">if</span> (state == <span class="hljs-string">'oe'</span>) { <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>; }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-23">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-23">&#182;</a>
+              </div>
+              <p>else proceeed normally</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>	<span class="hljs-keyword">else</span> {
+		<span class="hljs-keyword">var</span> child = <span class="hljs-keyword">new</span> Node(state, head, tape);
 		child.setParent(<span class="hljs-keyword">this</span>);
 		<span class="hljs-keyword">this</span>.children.push(child);
 		<span class="hljs-keyword">return</span> child;
@@ -245,23 +456,13 @@
         </li>
         
         
-        <li id="section-11">
+        <li id="section-24">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-11">&#182;</a>
+                <a class="pilcrow" href="#section-24">&#182;</a>
               </div>
-              <p>Node.prototype.addSibling = function(state) {
-    if (state == “oe”) { return null; }
-    else {
-        var par = this.Parent;
-        var sib = par.addChild(state, “/“);
-        sib.setParent(this);
-        sib.skip();
-        return sib;
-    }
-}
-Label a node as an epsilon node</p>
+              <p>Label a node as an epsilon node</p>
 
             </div>
             
@@ -270,125 +471,1459 @@ Label a node as an epsilon node</p>
         </li>
         
         
-        <li id="section-12">
+        <li id="section-25">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-12">&#182;</a>
+                <a class="pilcrow" href="#section-25">&#182;</a>
               </div>
-              <p>The Tree class constructor</p>
+              <p>//////////////////
+The Tree class //
+//////////////////</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">Tree</span><span class="hljs-params">(state)</span> </span>{
-	<span class="hljs-keyword">this</span>.root = <span class="hljs-keyword">new</span> Node(state, <span class="hljs-string">"/"</span>),
-	<span class="hljs-keyword">this</span>.treeDepth = <span class="hljs-number">0</span>,
+        </li>
+        
+        
+        <li id="section-26">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-26">&#182;</a>
+              </div>
+              <p>Construct tree with root. reset machine, new tape = starting config</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">Tree</span><span class="hljs-params">(tapeinput)</span> </span>{</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-27">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-27">&#182;</a>
+              </div>
+              <p>The machine class: TM or DFA or etc</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>	<span class="hljs-keyword">this</span>.Mclass = defM.class;
+	<span class="hljs-built_in">console</span>.log(<span class="hljs-string">"Constructed machine:"</span>);
+	<span class="hljs-built_in">console</span>.log(<span class="hljs-string">"-------"</span>, <span class="hljs-keyword">this</span>.Mclass, <span class="hljs-string">"-------"</span>);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-28">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-28">&#182;</a>
+              </div>
+              <p>the sentinel for halting compute()</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>	<span class="hljs-keyword">this</span>.halted = <span class="hljs-literal">undefined</span>;
+	<span class="hljs-keyword">this</span>.accepted = <span class="hljs-literal">undefined</span>;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-29">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-29">&#182;</a>
+              </div>
+              <p>parse the tape input into array</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>	<span class="hljs-keyword">this</span>.tapeinput = tapeinput;
+	<span class="hljs-keyword">this</span>.tape = <span class="hljs-keyword">this</span>.parseTape(tapeinput);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-30">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-30">&#182;</a>
+              </div>
+              <p>initialize tree</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>	<span class="hljs-keyword">this</span>.root = <span class="hljs-keyword">new</span> Node(defM.q0, <span class="hljs-number">0</span>, <span class="hljs-keyword">this</span>.tape);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-31">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-31">&#182;</a>
+              </div>
+              <p>Add a supernode as parent of root so that root can be epsilon-expanded</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>	<span class="hljs-keyword">this</span>.supernode = <span class="hljs-keyword">new</span> Node(defM.q0, -<span class="hljs-number">1</span>, <span class="hljs-keyword">this</span>.tape);
+	<span class="hljs-keyword">this</span>.supernode.addChild(<span class="hljs-keyword">this</span>.root);
+	<span class="hljs-keyword">this</span>.treeDepth = <span class="hljs-number">0</span>;
+	
 	forefront = []
 }</pre></div></div>
             
         </li>
         
         
-        <li id="section-13">
+        <li id="section-32">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-13">&#182;</a>
+                <a class="pilcrow" href="#section-32">&#182;</a>
+              </div>
+              <p>parse the tape input into array</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Tree.prototype.parseTape = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(tapeinput)</span> </span>{
+	<span class="hljs-keyword">var</span> tape = [];</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-33">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-33">&#182;</a>
+              </div>
+              <p>convert tape to array, then push each to realtape</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>	_.each(tapeinput, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(s)</span> </span>{
+		tape.push(s);
+	});</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-34">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-34">&#182;</a>
+              </div>
+              <p>for PDA: push stack marker into tape</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>	<span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.Mclass == <span class="hljs-string">'PDA'</span>) {
+		tape.push(defM.Z);
+	};
+	<span class="hljs-built_in">console</span>.log(<span class="hljs-string">"parsed tape: "</span>, tape);
+	<span class="hljs-keyword">return</span> tape;
+}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-35">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-35">&#182;</a>
+              </div>
+              <p>Size of tree: total number of nodes</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Tree.prototype.size = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+	<span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.root.sizeOf();
+}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-36">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-36">&#182;</a>
+              </div>
+              <p>TM: compute, either till halting configs, or till maxStep before halting</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Tree.prototype.compute = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(maxStep)</span> </span>{</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-37">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-37">&#182;</a>
+              </div>
+              <p>/////////////////////////
+add parent for root? //
+/////////////////////////</p>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-38">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-38">&#182;</a>
+              </div>
+              <p>var rootChild = new Node(this.root.state, 0, this.root.tape);
+this.root.addChild(rootChild);</p>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-39">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-39">&#182;</a>
+              </div>
+              <p>either loop till maxStep, or terminate in undefined = reject, or accept</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>	<span class="hljs-keyword">while</span> (<span class="hljs-keyword">this</span>.treeDepth &lt; maxStep) {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-40">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-40">&#182;</a>
+              </div>
+              <p>reset forefront and </p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>		<span class="hljs-keyword">this</span>.forefront = [];</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-41">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-41">&#182;</a>
+              </div>
+              <p>expand next depth of tree, calls halt() if reaches halting config</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>		<span class="hljs-keyword">this</span>.oneStep(<span class="hljs-keyword">this</span>.root);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-42">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-42">&#182;</a>
+              </div>
+              <p>console.log(“are you pushing? “, this.forefront);</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>		<span class="hljs-keyword">this</span>.treeDepth++;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-43">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-43">&#182;</a>
+              </div>
+              <p>if found halting state, halt() called in expand(), break loop</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>		<span class="hljs-keyword">if</span> ( <span class="hljs-keyword">this</span>.halted != <span class="hljs-literal">undefined</span> ) {
+			<span class="hljs-built_in">console</span>.log(<span class="hljs-string">"Computation halts. "</span>);
+			<span class="hljs-keyword">break</span>;
+		};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-44">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-44">&#182;</a>
+              </div>
+              <p>else keep looping till limit is reached</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>	}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-45">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-45">&#182;</a>
+              </div>
+              <p>if stops when exceeds maxStep, then TM might be looping</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>	<span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.treeDepth == maxStep) {
+		<span class="hljs-built_in">console</span>.log(<span class="hljs-string">"maxSteps exceeded. TM might not halt"</span>);
+	};
+}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-46">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-46">&#182;</a>
+              </div>
+              <p>One step in TM to yield next config(with non-determinism): read, write, move</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Tree.prototype.oneStep = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(node)</span> </span>{</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-47">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-47">&#182;</a>
+              </div>
+              <p>travel down till the right depth to expand from the node</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>	<span class="hljs-keyword">if</span> (node.depth === <span class="hljs-keyword">this</span>.treeDepth) {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-48">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-48">&#182;</a>
+              </div>
+              <p>old state and head location</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>		<span class="hljs-keyword">var</span> q = node.state;
+		<span class="hljs-keyword">var</span> h = node.head;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-49">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-49">&#182;</a>
+              </div>
+              <ol>
+<li>Read from tape</li>
+</ol>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>		<span class="hljs-keyword">var</span> s = <span class="hljs-keyword">this</span>.Read(node);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-50">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-50">&#182;</a>
+              </div>
+              <p>If config yields valid delta, the add children by non-determinism
+NOT executed if nd(q,s) is invalid – halt machine below.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>		<span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; nd(q,s).length; i++) {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-51">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-51">&#182;</a>
+              </div>
+              <p>get the output triple {state, write, move}</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>			<span class="hljs-keyword">var</span> ndOut = nd(q,s,i);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-52">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-52">&#182;</a>
+              </div>
+              <ol>
+<li>Write</li>
+</ol>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>			<span class="hljs-keyword">var</span> tape = <span class="hljs-keyword">this</span>.Write(node, ndOut);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-53">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-53">&#182;</a>
+              </div>
+              <ol>
+<li>Move. Last step: return config</li>
+</ol>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>			<span class="hljs-keyword">var</span> config = <span class="hljs-keyword">this</span>.Move(node, ndOut, tape);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-54">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-54">&#182;</a>
+              </div>
+              <p>Add child with new config to node</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>			<span class="hljs-keyword">this</span>.Expand(node, config);
+		};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-55">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-55">&#182;</a>
+              </div>
+              <ol>
+<li>Finally, halt at this node if necessary</li>
+</ol>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>		<span class="hljs-keyword">this</span>.TryHalt(q,s,h, node);
+	}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-56">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-56">&#182;</a>
+              </div>
+              <p>recursive call till the correct depth</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>	<span class="hljs-keyword">else</span> {
+		<span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; node.children.length; i++) {
+			<span class="hljs-keyword">this</span>.oneStep(node.children[i]);
+		}
+	}
+}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-57">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-57">&#182;</a>
+              </div>
+              <p>Unchanged machine methods for TM. Restriction reflected in defM</p>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-58">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-58">&#182;</a>
+              </div>
+              <ol>
+<li>Read: called once even in non-determinism</li>
+</ol>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Tree.prototype.Read = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(node)</span> </span>{</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-59">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-59">&#182;</a>
+              </div>
+              <p>read tape symbol at head</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>	<span class="hljs-keyword">return</span> node.tape[node.head];
+}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-60">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-60">&#182;</a>
+              </div>
+              <ol>
+<li>Write: can be called as many times as needed in non-determinism</li>
+</ol>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Tree.prototype.Write = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(node, ndOut)</span> </span>{</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-61">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-61">&#182;</a>
+              </div>
+              <p>explicitly copy tape</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>	<span class="hljs-keyword">var</span> tape = [];
+	_.each(node.tape, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span> </span>{ tape.push(e) });
+	
+	<span class="hljs-keyword">var</span> h = node.head;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-62">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-62">&#182;</a>
+              </div>
+              <p>if is epsilon, reverse one-step</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>	<span class="hljs-keyword">if</span> (node.epsilon)
+		h--;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-63">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-63">&#182;</a>
+              </div>
+              <p>then write to it at head</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>	tape[h] = ndOut.write;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-64">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-64">&#182;</a>
+              </div>
+              <p>console.log(“written tape: “, tape);
+return the new tape</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>	<span class="hljs-keyword">return</span> tape;
+}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-65">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-65">&#182;</a>
+              </div>
+              <ol>
+<li>Move: after writing on the new tape, expand it if needed, and move head</li>
+</ol>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Tree.prototype.Move = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(node, ndOut, tape)</span> </span>{</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-66">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-66">&#182;</a>
+              </div>
+              <p>the old head position</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>	<span class="hljs-keyword">var</span> h = node.head;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-67">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-67">&#182;</a>
+              </div>
+              <p>if is epsilon, reverse one-step</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>	<span class="hljs-keyword">if</span> (node.epsilon)
+		h--;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-68">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-68">&#182;</a>
+              </div>
+              <p>move right</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>	<span class="hljs-keyword">if</span> (ndOut.move == <span class="hljs-string">'R'</span>) {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-69">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-69">&#182;</a>
+              </div>
+              <p>if reach tape boundary, add blank symbol</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>		<span class="hljs-keyword">if</span> (tape[h+<span class="hljs-number">1</span>] == <span class="hljs-literal">undefined</span>) {
+			tape.push(defM.B);
+		}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-70">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-70">&#182;</a>
+              </div>
+              <p>move right anyway</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>		h++;
+	}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-71">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-71">&#182;</a>
+              </div>
+              <p>or move left</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>	<span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (ndOut.move == <span class="hljs-string">'L'</span>) {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-72">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-72">&#182;</a>
+              </div>
+              <p>if currently at leftmost, add blank symbol to front</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>		<span class="hljs-keyword">if</span> (h == <span class="hljs-number">0</span>)
+			tape.unshift(defM.B);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-73">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-73">&#182;</a>
+              </div>
+              <p>else can move to left</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>		<span class="hljs-keyword">else</span>
+			h--;
+	}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-74">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-74">&#182;</a>
+              </div>
+              <p>since is the last step: return the config</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>	<span class="hljs-keyword">return</span> {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-75">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-75">&#182;</a>
+              </div>
+              <p>the next state</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>		state: ndOut.state,</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-76">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-76">&#182;</a>
+              </div>
+              <p>the (expanded) tape and new head</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>		tape: tape,
+		head: h
+	}
+}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-77">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-77">&#182;</a>
+              </div>
+              <p>Add a new child with config to node, along with epsilon-expansions</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Tree.prototype.Expand = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(node, config)</span> </span>{
+	<span class="hljs-keyword">var</span> r = config.state; <span class="hljs-keyword">var</span> h = config.head; <span class="hljs-keyword">var</span> t = config.tape;
+	<span class="hljs-keyword">var</span> child = node.addChild(r, h, t);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-78">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-78">&#182;</a>
+              </div>
+              <p>If child isn’t dead state, add to forefront</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>	<span class="hljs-keyword">if</span> (child != <span class="hljs-literal">null</span>) {
+		<span class="hljs-keyword">this</span>.forefront.push(child.state);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-79">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-79">&#182;</a>
+              </div>
+              <p>An epsilon move: expand parallel in tree</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>		<span class="hljs-keyword">this</span>.expandEChild(child);
+	}
+}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-80">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-80">&#182;</a>
+              </div>
+              <p>Epsilon transition, Expand parallel to the child to add epsilon-children</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Tree.prototype.expandEChild = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(child)</span> </span>{</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-81">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-81">&#182;</a>
+              </div>
+              <p>Go back to child’s parent (e-child will share the same tree parent)</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>	<span class="hljs-keyword">var</span> root = child.Parent;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-82">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-82">&#182;</a>
+              </div>
+              <p>old state and head location</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>	<span class="hljs-keyword">var</span> q = child.state;
+	<span class="hljs-keyword">var</span> h = child.head;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-83">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-83">&#182;</a>
+              </div>
+              <ol>
+<li>Read from tape</li>
+</ol>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>	<span class="hljs-keyword">var</span> s = <span class="hljs-keyword">this</span>.Read(child);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-84">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-84">&#182;</a>
+              </div>
+              <p>if child has epsilon transition, </p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>	<span class="hljs-keyword">if</span> ( (nd(q, <span class="hljs-string">"/"</span>).state != <span class="hljs-string">'oe'</span> )) {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-85">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-85">&#182;</a>
+              </div>
+              <p>then expand</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>		<span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; nd(q, <span class="hljs-string">"/"</span>).length; i++) {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-86">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-86">&#182;</a>
+              </div>
+              <p>The output triple {state, write, move}</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>			<span class="hljs-keyword">var</span> ndOut = nd(q, <span class="hljs-string">"/"</span>, i);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-87">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-87">&#182;</a>
+              </div>
+              <p>mark that this child has an epsilon edge: h— in Write and Move</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>			child.skip();</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-88">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-88">&#182;</a>
+              </div>
+              <ol>
+<li>Write: with h = h-1 (don’t go to next tape symbol yet)</li>
+</ol>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>			<span class="hljs-keyword">var</span> tape = <span class="hljs-keyword">this</span>.Write(child, ndOut);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-89">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-89">&#182;</a>
+              </div>
+              <ol>
+<li>Move. With h = h-1. Last step: return config</li>
+</ol>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>			<span class="hljs-keyword">var</span> config = <span class="hljs-keyword">this</span>.Move(child, ndOut, tape);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-90">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-90">&#182;</a>
+              </div>
+              <p>head offset to h-1 (don’t go down the tree)</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>			<span class="hljs-keyword">var</span> r = config.state; <span class="hljs-keyword">var</span> h = config.head; <span class="hljs-keyword">var</span> t = config.tape;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-91">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-91">&#182;</a>
+              </div>
+              <p>add to same parent, push state to forefront</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>			<span class="hljs-keyword">var</span> eChild = root.addChild(r, h, t);
+			<span class="hljs-keyword">this</span>.forefront.push(eChild.state);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-92">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-92">&#182;</a>
+              </div>
+              <p>recurse as needed</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>			<span class="hljs-keyword">this</span>.expandEChild(eChild);
+		}
+	}
+}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-93">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-93">&#182;</a>
+              </div>
+              <ol>
+<li>Halt the TM if necessary</li>
+</ol>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Tree.prototype.TryHalt = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(q,s,h, node)</span> </span>{</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-94">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-94">&#182;</a>
+              </div>
+              <p>TM halting:</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>	<span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.Mclass === <span class="hljs-string">'TM'</span>) {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-95">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-95">&#182;</a>
+              </div>
+              <p>or in the forloop above, forefront has accept state, accept</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>		<span class="hljs-keyword">if</span> ( !_.isEmpty( _.intersection(defM.F, <span class="hljs-keyword">this</span>.forefront) ) ) {
+			<span class="hljs-keyword">this</span>.halt(<span class="hljs-number">1</span>, <span class="hljs-string">"TM accepts."</span>);
+		}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-96">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-96">&#182;</a>
+              </div>
+              <p>If this node outputs deadstate ‘oe’, reject </p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>		<span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (nd(q,s).state == <span class="hljs-string">'oe'</span>) {
+			<span class="hljs-keyword">this</span>.halt(<span class="hljs-number">0</span>, <span class="hljs-string">"TM rejects."</span>);
+		} 
+		
+	}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-97">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-97">&#182;</a>
+              </div>
+              <p>DFA/NFA halting: after the last tape symbol</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>	<span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.Mclass === <span class="hljs-string">'DFA'</span> || <span class="hljs-keyword">this</span>.Mclass == <span class="hljs-string">'NFA'</span>) {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-98">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-98">&#182;</a>
+              </div>
+              <p>if header moves past the last tape symbol</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>		<span class="hljs-keyword">if</span> ( h == <span class="hljs-keyword">this</span>.tape.length - <span class="hljs-number">1</span> ) {
+			<span class="hljs-keyword">if</span> ( !_.isEmpty( _.intersection(defM.F, <span class="hljs-keyword">this</span>.forefront) ) ) {
+				<span class="hljs-keyword">this</span>.halt(<span class="hljs-number">1</span>, <span class="hljs-string">"DFA/NFA accepts."</span>)
+			}
+			<span class="hljs-keyword">else</span> {
+				<span class="hljs-keyword">this</span>.halt(<span class="hljs-number">0</span>, <span class="hljs-string">"DFA/NFA rejects."</span>);
+			}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-99">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-99">&#182;</a>
+              </div>
+              <p>this.halt(“Stops at tape end.”);</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>		}
+	}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-100">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-100">&#182;</a>
+              </div>
+              <p>PDA halting: if all of input tape processed(pro).</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>	<span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.Mclass == <span class="hljs-string">'PDA'</span>) {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-101">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-101">&#182;</a>
+              </div>
+              <p>see number of processed input, marked ‘x’</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>		<span class="hljs-keyword">var</span> pro = <span class="hljs-number">0</span>;
+		_.each(node.tape, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span> </span>{
+			<span class="hljs-keyword">if</span> (e == <span class="hljs-string">'x'</span>) pro++;
+		});</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-102">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-102">&#182;</a>
+              </div>
+              <p>original tape length, discount stack top</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>		<span class="hljs-keyword">if</span> (pro == <span class="hljs-keyword">this</span>.root.tape.length-<span class="hljs-number">1</span>) {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-103">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-103">&#182;</a>
+              </div>
+              <p>Halt on processing all input</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>			<span class="hljs-keyword">this</span>.halt(<span class="hljs-number">0</span>, <span class="hljs-string">"Stop at tape end."</span>);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-104">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-104">&#182;</a>
+              </div>
+              <p>if accept by state, then reset message</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>			<span class="hljs-keyword">if</span> (_.contains(defM.F, node.state)) {
+				<span class="hljs-keyword">this</span>.forefront.push(node.state);
+				<span class="hljs-keyword">this</span>.halt(<span class="hljs-number">1</span>, <span class="hljs-string">"Accept via state."</span>);
+			}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-105">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-105">&#182;</a>
+              </div>
+              <p>accept with empty stack</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>			<span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.tape[node.head+<span class="hljs-number">1</span>] == defM.B){
+				<span class="hljs-keyword">this</span>.halt(<span class="hljs-number">1</span>, <span class="hljs-string">"Accept via empty stack"</span>);
+			}
+		}
+	}
+}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-106">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-106">&#182;</a>
+              </div>
+              <p>Report after halting</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Tree.prototype.report = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
+	<span class="hljs-built_in">console</span>.log();
+	<span class="hljs-built_in">console</span>.log(<span class="hljs-string">"Tape: "</span> + <span class="hljs-keyword">this</span>.tapeinput);
+	<span class="hljs-built_in">console</span>.log(<span class="hljs-string">"Tree size:"</span>, <span class="hljs-keyword">this</span>.size());
+	<span class="hljs-built_in">console</span>.log(<span class="hljs-string">"Forefront: "</span> + _.uniq(<span class="hljs-keyword">this</span>.forefront));
+	<span class="hljs-keyword">var</span> accepts = _.intersection(<span class="hljs-keyword">this</span>.forefront, defM.F);
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"Accepted states: "</span> + accepts);
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-keyword">this</span>.halted);
+
+    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.accepted == <span class="hljs-number">1</span>) {
+        <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"======Accept.======\n\n"</span>);
+    } <span class="hljs-keyword">else</span> {
+        <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"======Reject.======\n\n"</span>);
+    }
+}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-107">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-107">&#182;</a>
+              </div>
+              <p>Halt the TM with the result</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Tree.prototype.halt = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(accept, result)</span> </span>{
+	<span class="hljs-keyword">this</span>.accepted = accept;
+	<span class="hljs-keyword">this</span>.halted = result;
+}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-108">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-108">&#182;</a>
               </div>
               <p>Print the tree</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>Tree.prototype.printTree = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
-	<span class="hljs-keyword">this</span>.root.preOrder();
-}</pre></div></div>
+            <div class="content"><div class='highlight'><pre>Tree.prototype.printTree = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{</pre></div></div>
             
         </li>
         
         
-        <li id="section-14">
+        <li id="section-109">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-14">&#182;</a>
+                <a class="pilcrow" href="#section-109">&#182;</a>
               </div>
-              <p>Compute the next step</p>
+              <p>Tell format for TM</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>Tree.prototype.nextStep = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(symbol)</span> </span>{
-	<span class="hljs-keyword">this</span>.forefront = [];
-	<span class="hljs-keyword">this</span>.expand(symbol, <span class="hljs-keyword">this</span>.root);
-	<span class="hljs-keyword">this</span>.treeDepth++;
-	<span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.forefront;
-}</pre></div></div>
+            <div class="content"><div class='highlight'><pre>	<span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.Mclass == <span class="hljs-string">'TM'</span>) {
+		<span class="hljs-built_in">console</span>.log(<span class="hljs-string">"Printing Tree, config format:\n"</span>);
+	}</pre></div></div>
             
         </li>
         
         
-        <li id="section-15">
+        <li id="section-110">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-15">&#182;</a>
+                <a class="pilcrow" href="#section-110">&#182;</a>
               </div>
-              <p>Expand the tree: continue to compute, add children and epsilon children, until the end of computation</p>
+              <p>Format for DFA/NFA</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>Tree.prototype.expand = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(symbol, root)</span> </span>{
-	<span class="hljs-keyword">if</span> (root.depth === <span class="hljs-keyword">this</span>.treeDepth) {
-		<span class="hljs-keyword">var</span> q = root.state;
-		<span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; nd(q, symbol).length; i++) {
-			<span class="hljs-keyword">var</span> c = nd(q, symbol, i);
-			<span class="hljs-keyword">var</span> child = root.addChild(c, symbol);
-			<span class="hljs-keyword">if</span> (child != <span class="hljs-literal">null</span>) {
-				<span class="hljs-keyword">this</span>.forefront.push(child.state);
-				<span class="hljs-keyword">this</span>.expandEChild(child);
-			}
-		}
-	} 
-	<span class="hljs-keyword">else</span> {
-		<span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; root.children.length; i++) {
-			<span class="hljs-keyword">this</span>.expand(symbol, root.children[i]);
-		}
-	}
-}</pre></div></div>
+            <div class="content"><div class='highlight'><pre>	<span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.Mclass == <span class="hljs-string">'DFA'</span> || <span class="hljs-keyword">this</span>.Mclass == <span class="hljs-string">'NFA'</span>) {
+		<span class="hljs-built_in">console</span>.log(<span class="hljs-string">"Printing Tree: input-symbol&gt; &amp; result-state\n"</span>);
+	}</pre></div></div>
             
         </li>
         
         
-        <li id="section-16">
+        <li id="section-111">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-16">&#182;</a>
+                <a class="pilcrow" href="#section-111">&#182;</a>
               </div>
-              <p>Expand the epsilon parallel branch: Add epsilon children</p>
+              <p>Format for PDA</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>Tree.prototype.expandEChild = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(child)</span> </span>{
-	<span class="hljs-keyword">var</span> root = child.Parent;
-	<span class="hljs-keyword">var</span> q = child.state;
-	<span class="hljs-keyword">if</span> (! (nd(q, <span class="hljs-string">"/"</span>) == <span class="hljs-string">'oe'</span>)) {
-		<span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; nd(q, <span class="hljs-string">"/"</span>).length; i++) {
-			<span class="hljs-keyword">var</span> c = nd(q, <span class="hljs-string">"/"</span>, i);
-			<span class="hljs-keyword">var</span> eChild = root.addChild(c, <span class="hljs-string">"/"</span>);
-			<span class="hljs-keyword">this</span>.forefront.push(eChild.state);
-			<span class="hljs-keyword">this</span>.expandEChild(eChild);
-		}
-	}
+            <div class="content"><div class='highlight'><pre>	<span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.Mclass == <span class="hljs-string">'PDA'</span>) {
+		<span class="hljs-built_in">console</span>.log(<span class="hljs-string">"Printing Tree, config format with stack:\n"</span>);
+	}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-112">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-112">&#182;</a>
+              </div>
+              <p>print according to machine class</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>	<span class="hljs-keyword">this</span>.root.preOrder( <span class="hljs-keyword">this</span>.Mclass );
 }</pre></div></div>
             
         </li>
         
         
-        <li id="section-17">
+        <li id="section-113">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-17">&#182;</a>
+                <a class="pilcrow" href="#section-113">&#182;</a>
               </div>
               <p>Print all states resulting from the last computation step</p>
 
@@ -404,11 +1939,11 @@ Label a node as an epsilon node</p>
         </li>
         
         
-        <li id="section-18">
+        <li id="section-114">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-18">&#182;</a>
+                <a class="pilcrow" href="#section-114">&#182;</a>
               </div>
               <p>Export the Tree module</p>
 

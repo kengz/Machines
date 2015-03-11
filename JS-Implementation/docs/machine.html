@@ -35,6 +35,11 @@
                 </a>
               
                 
+                <a class="source" href="converter.html">
+                  converter.js
+                </a>
+              
+                
                 <a class="source" href="machine.html">
                   machine.js
                 </a>
@@ -92,23 +97,21 @@ Currently the explicit construction is up to e-NFA, the machine head (which give
                 <a class="pilcrow" href="#section-3">&#182;</a>
               </div>
               <p>Import machine definitions from JSON, including inputs at the last.
-A sample DFA:
-var defM = require(‘./Definitions/machine_def.json’);
 For DFA minimization algorithm:
-var defM = require(‘./Definitions/DFAtoMin1.json’);
-var defM = require(‘./Definitions/DFAtoMin2.json’);
-ex 4.4.1
-var defM = require(‘./Definitions/DFAtoMin3.json’);
-ex 4.4.2
-var defM = require(‘./Definitions/DFAtoMin4.json’);
-ex 3.2.1
-var defM = require(‘./Definitions/machine_3_2_1.json’);
-ex 3.2.2
-var defM = require(‘./Definitions/machine_3_2_2.json’);</p>
+var rawdefM = require(‘./definitions/DFA_4_18.json’);
+var rawdefM = require(‘./definitions/DFA_4_21.json’);
+var rawdefM = require(‘./definitions/DFA_4_4_1.json’);
+var rawdefM = require(‘./definitions/DFA_4_4_2.json’);
+var rawdefM = require(‘./definitions/DFA_3_2_1.json’);
+var rawdefM = require(‘./definitions/DFA_3_2_2.json’);
+var rawdefM = require(‘./definitions/minDFA.json’);
+var rawdefM = require(‘./definitions/minDFA_4_4_1.json’);
+var rawdefM = require(‘./definitions/minDFA_4_4_2.json’);
+var rawdefM = require(‘./definitions/minDFA_3_2_1.json’);
+var rawdefM = require(‘./definitions/minDFA_3_2_2.json’);
+var rawdefM = require(‘./definitions/NFA_1_38.json’);</p>
 
             </div>
-            
-            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> defM = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./Definitions/minDFA.json'</span>);</pre></div></div>
             
         </li>
         
@@ -119,10 +122,10 @@ var defM = require(‘./Definitions/machine_3_2_2.json’);</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-4">&#182;</a>
               </div>
-              <p>var defM = require(‘./Definitions/minDFA_4_4_1.json’);
-var defM = require(‘./Definitions/minDFA_4_4_2.json’);
-var defM = require(‘./Definitions/minDFA_3_2_1.json’);
-var defM = require(‘./Definitions/minDFA_3_2_2.json’);</p>
+              <p>var rawdefM = require(‘./definitions/TM_0power.json’);
+var rawdefM = require(‘./definitions/TM_repeat.json’);
+var rawdefM = require(‘./definitions/TM_nondeter.json’);
+var rawdefM = require(‘./definitions/TM_palindrome.json’);</p>
 
             </div>
             
@@ -135,11 +138,12 @@ var defM = require(‘./Definitions/minDFA_3_2_2.json’);</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-5">&#182;</a>
               </div>
-              <p>//////////////////////
-Machine Definition //
-//////////////////////</p>
+              <p>var rawdefM = require(‘./definitions/newPDA.json’);
+var rawdefM = require(‘./definitions/PDA_6_1_1.json’);</p>
 
             </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> rawdefM = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./definitions/PDA_6_2_1.json'</span>);</pre></div></div>
             
         </li>
         
@@ -150,11 +154,11 @@ Machine Definition //
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-6">&#182;</a>
               </div>
-              <p>declare the tuples in machine definition</p>
+              <p>Export raw machine definition for converter.js, or DFA minimizer</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> Q, S, F, q0, delta;</pre></div></div>
+            <div class="content"><div class='highlight'><pre>exports.rawdefM = rawdefM;</pre></div></div>
             
         </li>
         
@@ -165,13 +169,11 @@ Machine Definition //
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-7">&#182;</a>
               </div>
-              <p>A sample delta table format; will be imported from a JSON file
-A map from input pair-key (Q, S); to array of outputs values
-Keys that map to empty set are not recorded; see nd() output.</p>
+              <p>declare the compatible machine definition</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>delta = {</pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> defM;</pre></div></div>
             
         </li>
         
@@ -182,11 +184,14 @@ Keys that map to empty set are not recorded; see nd() output.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-8">&#182;</a>
               </div>
-              <p>an input state</p>
+              <p>///////////////////////////////////
+convert machine to TM if needed //
+///////////////////////////////////</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    a: {</pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> Mclass = rawdefM.class;
+<span class="hljs-keyword">var</span> converter = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./converter.js'</span>);</pre></div></div>
             
         </li>
         
@@ -197,18 +202,11 @@ Keys that map to empty set are not recorded; see nd() output.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-9">&#182;</a>
               </div>
-              <p>an input symbol, yields general array of outputs</p>
+              <p>set defM as converted def</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        <span class="hljs-number">0</span>: [<span class="hljs-string">"a"</span>],
-        <span class="hljs-number">1</span>: [<span class="hljs-string">"a"</span>, <span class="hljs-string">"b"</span>]
-    },
-    b: {
-        <span class="hljs-number">0</span>: [<span class="hljs-string">"c"</span>],
-        <span class="hljs-string">"/"</span>: [<span class="hljs-string">"c"</span>]
-    }
-};</pre></div></div>
+            <div class="content"><div class='highlight'><pre>defM = converter.run();</pre></div></div>
             
         </li>
         
@@ -219,11 +217,11 @@ Keys that map to empty set are not recorded; see nd() output.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-10">&#182;</a>
               </div>
-              <p>The states</p>
+              <p>//////////////////////
+Machine Definition //
+//////////////////////</p>
 
             </div>
-            
-            <div class="content"><div class='highlight'><pre>Q = defM.Q;</pre></div></div>
             
         </li>
         
@@ -234,11 +232,12 @@ Keys that map to empty set are not recorded; see nd() output.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-11">&#182;</a>
               </div>
-              <p>The alphabet, union with epsilon symbol “/“</p>
+              <p>Reference only: the tuples in machine definition (as necessary)
+Q: states, S: alphabet, T: tape/stack symbols, B: blank symbol, F: accept states, q0: start state, delta: transition table</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>S = _.union(defM.S, [<span class="hljs-string">"/"</span>]);</pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> Q, S, T, B, F, q0, delta;</pre></div></div>
             
         </li>
         
@@ -249,11 +248,11 @@ Keys that map to empty set are not recorded; see nd() output.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-12">&#182;</a>
               </div>
-              <p>The accept states</p>
+              <p>//////////////////
+Delta function //
+//////////////////</p>
 
             </div>
-            
-            <div class="content"><div class='highlight'><pre>F = defM.F;</pre></div></div>
             
         </li>
         
@@ -264,11 +263,11 @@ Keys that map to empty set are not recorded; see nd() output.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-13">&#182;</a>
               </div>
-              <p>The start state</p>
+              <p>The delta transition function for nd, d</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>q0 = defM.q0;</pre></div></div>
+            <div class="content"><div class='highlight'><pre>delta = defM.delta;</pre></div></div>
             
         </li>
         
@@ -278,21 +277,6 @@ Keys that map to empty set are not recorded; see nd() output.</p>
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-14">&#182;</a>
-              </div>
-              <p>The delta transition function</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>delta = defM.delta;</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-15">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-15">&#182;</a>
               </div>
               <p>Non-deterministic delta transition function
 Return: “oe” for empty set(dead state)</p>
@@ -304,13 +288,30 @@ Return: “oe” for empty set(dead state)</p>
         </li>
         
         
+        <li id="section-15">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-15">&#182;</a>
+              </div>
+              <p>if a state is absent in delta, dead:</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">if</span> (delta[q] == <span class="hljs-literal">undefined</span>) {
+        <span class="hljs-keyword">return</span> { state: <span class="hljs-string">'oe'</span> }
+    }</pre></div></div>
+            
+        </li>
+        
+        
         <li id="section-16">
             <div class="annotation">
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-16">&#182;</a>
               </div>
-              <p>get the output array</p>
+              <p>else if state present: get the output array</p>
 
             </div>
             
@@ -325,12 +326,12 @@ Return: “oe” for empty set(dead state)</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-17">&#182;</a>
               </div>
-              <p>if empty (dead state), return empty set “oe”</p>
+              <p>if symbol absent for state, (return empty ‘oe’ = dead state)</p>
 
             </div>
             
             <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">if</span> (arr == <span class="hljs-literal">undefined</span>)
-        <span class="hljs-keyword">return</span> <span class="hljs-string">"oe"</span>;</pre></div></div>
+        <span class="hljs-keyword">return</span> {</pre></div></div>
             
         </li>
         
@@ -341,12 +342,13 @@ Return: “oe” for empty set(dead state)</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-18">&#182;</a>
               </div>
-              <p>if without index, return whole set(array)</p>
+              <p>for DFA</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (index == <span class="hljs-literal">undefined</span>)
-        <span class="hljs-keyword">return</span> arr;</pre></div></div>
+            <div class="content"><div class='highlight'><pre>            state: <span class="hljs-string">'oe'</span>,
+            move: <span class="hljs-string">'R'</span> 
+        }</pre></div></div>
             
         </li>
         
@@ -357,13 +359,13 @@ Return: “oe” for empty set(dead state)</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-19">&#182;</a>
               </div>
-              <p>with index, return specific entry(undefined if invalid index)</p>
+              <p>else if state, symbol present, 
+but called without index, return whole set(array), used by iterator</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">else</span>
-        <span class="hljs-keyword">return</span> arr[index];
-};</pre></div></div>
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (index == <span class="hljs-literal">undefined</span>)
+        <span class="hljs-keyword">return</span> arr;</pre></div></div>
             
         </li>
         
@@ -373,6 +375,27 @@ Return: “oe” for empty set(dead state)</p>
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-20">&#182;</a>
+              </div>
+              <p>lastly, if with index, return specific entry(undefined if invalid index)</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">else</span>
+        <span class="hljs-keyword">return</span> {
+            state: arr[index][<span class="hljs-number">0</span>],
+            write: arr[index][<span class="hljs-number">1</span>],
+            move: arr[index][<span class="hljs-number">2</span>],
+        }
+    };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-21">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-21">&#182;</a>
               </div>
               <p>Deterministic delta function, return outputs to input(q,s)
 Is a restriction of nd() - nondeterministic delta.</p>
@@ -386,33 +409,19 @@ Is a restriction of nd() - nondeterministic delta.</p>
         </li>
         
         
-        <li id="section-21">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-21">&#182;</a>
-              </div>
-              <p>Export the nd for Tree, then import Tree below to compute</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>exports.nd = nd;
-exports.d = d;</pre></div></div>
-            
-        </li>
-        
-        
         <li id="section-22">
             <div class="annotation">
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-22">&#182;</a>
               </div>
-              <p>Export the machine for usage elsewhere</p>
+              <p>Export for usage by Tree.js and DFA minimizer, distintable</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>exports.defM = defM;</pre></div></div>
+            <div class="content"><div class='highlight'><pre>exports.nd = nd;
+exports.d = d;
+exports.defM = defM;</pre></div></div>
             
         </li>
         
@@ -468,11 +477,11 @@ Machine computation //
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-26">&#182;</a>
               </div>
-              <p>Construct a tree with the start state of machine</p>
+              <p>Main method to run: Compute all input strings</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> m1;</pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> computeAll = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{</pre></div></div>
             
         </li>
         
@@ -483,11 +492,14 @@ Machine computation //
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-27">&#182;</a>
               </div>
-              <p>function to compute one input</p>
+              <p>compute for all input</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> compute = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(i)</span> </span>{</pre></div></div>
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; input.length; i++) {
+        compute(i);
+    };
+};</pre></div></div>
             
         </li>
         
@@ -498,14 +510,11 @@ Machine computation //
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-28">&#182;</a>
               </div>
-              <p>init new tree</p>
+              <p>Compute one input</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    m1 = <span class="hljs-keyword">new</span> t.Tree(q0);
-    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"Tape: "</span> + input[i]);
-    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"Machine computing:"</span>);
-    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"==================="</span>);</pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> compute = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(i)</span> </span>{</pre></div></div>
             
         </li>
         
@@ -516,14 +525,11 @@ Machine computation //
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-29">&#182;</a>
               </div>
-              <p>Compute with the tape</p>
+              <p>The max depth of computation tree</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> j = <span class="hljs-number">0</span>; j &lt; input[i].length; j++) {
-        m1.nextStep(input[i][j]);
-    }
-    m1.printTree();</pre></div></div>
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">var</span> max = <span class="hljs-number">500</span>;</pre></div></div>
             
         </li>
         
@@ -534,20 +540,13 @@ Machine computation //
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-30">&#182;</a>
               </div>
-              <p>Check for accept states in the lowest level of tree = forefront</p>
+              <p>init new tree</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">var</span> accepts = _.intersection(m1.forefront, F);
-    <span class="hljs-keyword">if</span> (accepts.length &gt; <span class="hljs-number">0</span>) {
-        <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"Forefront: "</span> + _.uniq(m1.forefront));
-        <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"Accepted states: "</span> + accepts);
-        <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"======Accept.======\n"</span>);
-    } <span class="hljs-keyword">else</span> {
-        <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"======Reject.======\n"</span>);
-    }
-
-};</pre></div></div>
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">var</span> m1 = <span class="hljs-keyword">new</span> t.Tree(input[i]);
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"Tape: "</span> + input[i]);
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"Machine computing...\n"</span>);</pre></div></div>
             
         </li>
         
@@ -558,14 +557,14 @@ Machine computation //
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-31">&#182;</a>
               </div>
-              <p>Compute all input strings</p>
+              <p>compute and print tree</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> computeAll = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">()</span> </span>{
-    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; input.length; i++) {
-        compute(i);
-    };
+            <div class="content"><div class='highlight'><pre>    m1.compute(max);
+    m1.printTree();
+    m1.report();
+
 };</pre></div></div>
             
         </li>
