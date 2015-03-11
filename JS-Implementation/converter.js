@@ -58,11 +58,6 @@ var convertDFAtoTM = function() {
             };
         });
     });
-    // // replace the modified delta for TM
-    // defM.delta = newD;
-    // // and add the additional 2-tuples
-    // defM.B = "_";
-    // defM.T = _.union(T, defM.B);
 };
 
 
@@ -97,7 +92,6 @@ var convertPDAtoTM = function() {
             newD[state][symbol] = unique(newD[state][symbol]);
         });
     });
-    // defM.delta = newD;
 };
 
 
@@ -214,18 +208,14 @@ var run = function() {
 
     if (Mclass == 'TM') {
         // dont convert anything
-        // return defM;
         newD = delta;
     } 
     else if (Mclass == 'DFA' || Mclass == 'NFA') {
-        console.log("into DFA");
         convertDFAtoTM();
     } 
     else if (Mclass == 'PDA') {
-        console.log("into PDA");
         convertPDAtoTM();
     }
-    else {}
 
     // reset defM before returning
     defM.Q = Q;

@@ -351,11 +351,14 @@ They are the state without indices and ‘,’</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-18">&#182;</a>
               </div>
-              <p>this.indent();</p>
+              <p>indent for each marked input</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>			<span class="hljs-keyword">this</span>.tape.splice(<span class="hljs-keyword">this</span>.head, <span class="hljs-number">0</span>, <span class="hljs-keyword">this</span>.state);
+            <div class="content"><div class='highlight'><pre>			_.each(<span class="hljs-keyword">this</span>.tape, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(e)</span> </span>{
+				<span class="hljs-keyword">if</span> (e == <span class="hljs-string">'x'</span>) process.stdout.write(<span class="hljs-string">"  "</span>);
+			});
+			<span class="hljs-keyword">this</span>.tape.splice(<span class="hljs-keyword">this</span>.head, <span class="hljs-number">0</span>, <span class="hljs-keyword">this</span>.state);
 			<span class="hljs-built_in">console</span>.log(<span class="hljs-keyword">this</span>.tape.join());
 		};
 	}
@@ -1776,11 +1779,11 @@ return the new tape</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-105">&#182;</a>
               </div>
-              <p>accept with empty stack</p>
+              <p>or accept with empty stack</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>			<span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.tape[node.head+<span class="hljs-number">1</span>] == defM.B){
+            <div class="content"><div class='highlight'><pre>			<span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (node.tape[node.head+<span class="hljs-number">1</span>] == defM.B){
 				<span class="hljs-keyword">this</span>.halt(<span class="hljs-number">1</span>, <span class="hljs-string">"Accept via empty stack"</span>);
 			}
 		}
@@ -1806,14 +1809,14 @@ return the new tape</p>
 	<span class="hljs-built_in">console</span>.log(<span class="hljs-string">"Tree size:"</span>, <span class="hljs-keyword">this</span>.size());
 	<span class="hljs-built_in">console</span>.log(<span class="hljs-string">"Forefront: "</span> + _.uniq(<span class="hljs-keyword">this</span>.forefront));
 	<span class="hljs-keyword">var</span> accepts = _.intersection(<span class="hljs-keyword">this</span>.forefront, defM.F);
-    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"Accepted states: "</span> + accepts);
-    <span class="hljs-built_in">console</span>.log(<span class="hljs-keyword">this</span>.halted);
+	<span class="hljs-built_in">console</span>.log(<span class="hljs-string">"Accepted states: "</span> + accepts);
+	<span class="hljs-built_in">console</span>.log(<span class="hljs-keyword">this</span>.halted);
 
-    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.accepted == <span class="hljs-number">1</span>) {
-        <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"======Accept.======\n\n"</span>);
-    } <span class="hljs-keyword">else</span> {
-        <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"======Reject.======\n\n"</span>);
-    }
+	<span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.accepted == <span class="hljs-number">1</span>) {
+		<span class="hljs-built_in">console</span>.log(<span class="hljs-string">"======Accept.======\n\n"</span>);
+	} <span class="hljs-keyword">else</span> {
+		<span class="hljs-built_in">console</span>.log(<span class="hljs-string">"======Reject.======\n\n"</span>);
+	}
 }</pre></div></div>
             
         </li>

@@ -125,7 +125,7 @@ var computeAll = function() {
 // Compute one input
 var compute = function(i) {
     // The max depth of computation tree
-    var max = 500;
+    var max = 100;
 
     // init new tree
     var m1 = new t.Tree(input[i]);
