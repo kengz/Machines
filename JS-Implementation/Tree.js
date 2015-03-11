@@ -151,7 +151,7 @@ Tree.prototype.parseTape = function(tapeinput) {
 	if (this.Mclass == 'PDA') {
 		tape.push(defM.Z);
 	};
-	console.log("parsed tape: ", tape);
+	// console.log("parsed tape: ", tape);
 	return tape;
 }
 // Size of tree: total number of nodes
