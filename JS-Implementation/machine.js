@@ -9,7 +9,7 @@ var _ = require("underscore");
 
 // Import machine definitions from JSON, including inputs at the last.
 // For DFA minimization algorithm:
-var rawdefM = require('./definitions/DFA_4_18.json');
+// var rawdefM = require('./definitions/DFA_4_18.json');
 // var rawdefM = require('./definitions/DFA_4_21.json');
 // var rawdefM = require('./definitions/DFA_4_4_1.json');
 // var rawdefM = require('./definitions/DFA_4_4_2.json');
@@ -22,14 +22,14 @@ var rawdefM = require('./definitions/DFA_4_18.json');
 // var rawdefM = require('./definitions/minDFA_3_2_2.json');
 // var rawdefM = require('./definitions/NFA_1_38.json');
 
-// var rawdefM = require('./definitions/TM-0power.json');
-// var rawdefM = require('./definitions/TM-repeat.json');
-// var rawdefM = require('./definitions/TM-nondeter.json');
-// var rawdefM = require('./definitions/TM-palindrome.json');
+// var rawdefM = require('./definitions/TM_0power.json');
+// var rawdefM = require('./definitions/TM_repeat.json');
+// var rawdefM = require('./definitions/TM_nondeter.json');
+// var rawdefM = require('./definitions/TM_palindrome.json');
 
 // var rawdefM = require('./definitions/newPDA.json');
-// var rawdefM = require('./definitions/PDA-6_1_1.json');
-// var rawdefM = require('./definitions/PDA-6_1_1.json');
+// var rawdefM = require('./definitions/PDA_6_1_1.json');
+var rawdefM = require('./definitions/PDA_6_2_1.json');
 
 // Export raw machine definition for converter.js, or DFA minimizer
 exports.rawdefM = rawdefM;

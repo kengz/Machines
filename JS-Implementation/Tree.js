@@ -114,7 +114,6 @@ Node.prototype.skip = function() { return this.epsilon = true; }
 
 // Construct tree with root. reset machine, new tape = starting config
 function Tree(tapeinput) {
-	console.log(defM.F);
 	// The machine class: TM or DFA or etc
 	this.Mclass = defM.class;
 	console.log("Constructed machine:");
@@ -129,8 +128,12 @@ function Tree(tapeinput) {
 	this.tape = this.parseTape(tapeinput);
 
 	// initialize tree
-	this.root = new Node(defM.q0, 0, this.tape),
+	this.root = new Node(defM.q0, 0, this.tape);
+	// Add a supernode as parent of root so that root can be epsilon-expanded
+	this.supernode = new Node(defM.q0, -1, this.tape);
+	this.supernode.addChild(this.root);
 	this.treeDepth = 0;
+	
 	forefront = []
 }
 
