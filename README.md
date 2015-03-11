@@ -1,5 +1,5 @@
 # Machines
-A polymorphic implementation of the machines: `DFA, NFA, e-NFA, PDA, TM, N-TM`.
+A polymorphic implementation of the machines: `DFA, NFA, e-NFA, PDA, TM, N-TM`, in `Javascript`.
 The design is object-oriented to show the machine functions, and to emphasize that the other machines are restrictions of the `non-deterministic Turing Machine (N-TM)`.
 
 
