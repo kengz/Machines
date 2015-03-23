@@ -1,0 +1,28 @@
+{
+  "name": "Machines",
+  "version": "0.3.0",
+  "description": "A polymorphic implementation of the machines: `DFA, NFA, e-NFA, PDA, TM, N-TM`, in `Javascript`. The design is object-oriented to show the machine functions, and to emphasize that the other machines are restrictions of the `non-deterministic Turing Machine (N-TM)`.",
+  "main": "machine.js",
+  "dependencies": {
+    "collections": "^1.2.1",
+    "underscore": "^1.8.2"
+  },
+  "devDependencies": {},
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kengz/Machines.git"
+  },
+  "keywords": [],
+  "author": "Wah Loon Keng",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kengz/Machines/issues"
+  },
+  "homepage": "https://github.com/kengz/Machines"
+}
