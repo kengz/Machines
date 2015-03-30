@@ -3,7 +3,7 @@ A polymorphic implementation of the machines: `DFA, NFA, e-NFA, PDA, TM, N-TM`, 
 The design is object-oriented to show the machine functions, and to emphasize that the other machines are restrictions of the `non-deterministic Turing Machine (N-TM)`.
 
 
-##Instructions
+## Instructions
 For the `JS` implementation:
 
 Note that the machine definition (as `JSON` files, refer examples for format) is specified at the top in `machine.js`. This is where the machine is built, and exported for usage elsewhere.
@@ -20,6 +20,11 @@ Simply build and run as usual: type into terminal `node <file>`, where *<file>* 
 `converter.js` and `Tree.js` are helper classes for `machine.js`, and will be called within it. The former converts `DFA, NFA, e-NFA, PDA` into restrictions of `TM`; the latter gives the nondeterministic structure of `TM`.
 
 For detailed documentation, refer to the `*.html` pages, generated with `Docco`.
+
+
+## JSON format
+
+For sample machine definitions, refer to the sample json files in the `definitions` folder. The format is designed to reflect the restrictive-polymorphic nature among the machines.
 
 
 ## Versions
