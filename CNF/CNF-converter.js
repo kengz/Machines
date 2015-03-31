@@ -6,7 +6,7 @@ var fs = require('fs');
 
 // Import the grammar to convert to Chomsky Normal Form
 // var G = require('./CFG/CFG_G6.json');
-var G = require('./CFG/CFG_7_1_3.json');
+var G = require('./CFG/CFG_7_1_4.json');
 
 // The primary function to convert a grammar to CNF
 function toCNF() {
@@ -29,7 +29,7 @@ function toCNF() {
 	// write CNF to file
 	// var outFile = './CFG/converted-CNF.json';
 	// var outFile = './CFG/CNF_G6.json';
-	var outFile = './CFG/CNF_7_1_3.json';
+	var outFile = './CFG/CNF_7_1_4.json';
 	fs.writeFileSync(outFile, JSON.stringify(G, null, 4));
 }
 
