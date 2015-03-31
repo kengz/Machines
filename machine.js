@@ -27,7 +27,7 @@ var _ = require("underscore");
 // var rawdefM = require('./definitions/TM_nondeter.json');
 // var rawdefM = require('./definitions/TM_palindrome.json');
 
-// var rawdefM = require('./definitions/PDA_6_1_1.json');
+var rawdefM = require('./definitions/PDA_6_1_1.json');
 // var rawdefM = require('./definitions/PDA_6_2_1.json');
 
 // Export raw machine definition for converter.js, or DFA minimizer

@@ -74,7 +74,8 @@ Node.prototype.printHere = function(Mclass) {
 				if (e == 'x') process.stdout.write("  ");
 			});
 			this.tape.splice(this.head, 0, this.state);
-			console.log(this.tape.join());
+			// print the ID (without crossed 'x')
+			console.log(_.without(this.tape,'x').join());
 		};
 	}
 
