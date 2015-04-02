@@ -21,6 +21,9 @@ Simply build and run as usual: type into terminal `node <file>`, where *<file>* 
 
 For detailed documentation, refer to the `*.html` pages, generated with `Docco`.
 
+#### Chomsky Normal Form
+There's now a file, under the `CNF` folder, that converts a grammar into Chomsky Normal Form. For the proper JSON format for the `CFG`, refer to examples in the `CFG` subfolders.
+
 
 ## JSON format
 

@@ -10,9 +10,16 @@ var G = require('./CFG/CFG_7_1_4.json');
 
 // The primary function to convert a grammar to CNF
 function toCNF() {
-	// removeUseless();
-	console.log("1. elim useless");
+	console.log("Input");
 	console.log(G);
+
+	// addStart();
+	// console.log("add start var");
+	// console.log(G);
+
+	// removeUseless();
+	// console.log("1. elim useless");
+	// console.log(G);
 
 	elimEp();
 	console.log("2. elim epsilon");
@@ -42,6 +49,12 @@ toCNF();
 // 1. elim epsilon, replace uAv as uv, w/ uv can be empty
 // 2. remove unit rule, short circuit.
 // 3. convert all remainder, keep first, var rest
+
+// add new start variable
+function addStart() {
+	// add new start var 'R'
+	G['R'] = ['S'];
+}
 
 // Remove useless rules
 function removeUseless() {
@@ -90,10 +103,10 @@ function removeUseless() {
 
 	// helper: try to elim key if it's nongenerating
 	function tryNonGen(key) {
-		var ind = _.find(subbing(key, 0), function(r) {
+		var found = _.find(subbing(key, 0), function(r) {
 			return isTerminal(r);
 		});
-		if (ind == undefined) {
+		if (found == undefined) {
 			// delete symbol
 			delete G[key];
 			// delete all occurence
@@ -439,13 +452,13 @@ function terminalRuleKey(c) {
 // Function to get next usable symbol, starts from A, B.., skips S
 function nextNewSymbol() {
 	// get the int char code of all symbols except 'S'
-	var charCode = _.map(_.without(_.keys(G), 'S'), function(key) {
+	var charCode = _.map(_.without(_.keys(G), 'S', 'R'), function(key) {
 		return key.charCodeAt(0);
 	})
 	// next available letter is max + 1, or skip around
 	var newCode = _.max(charCode) + 1;
 	// if conflict with S, skip to next value
-	if (newCode == 'S'.charCodeAt(0) ) { newCode++; }
+	if (newCode == 'S'.charCodeAt(0) || newCode == 'R'.charCodeAt(0) ) { newCode++; }
 	// return next new symbol, capped char
 	return String.fromCharCode(newCode);
 }
