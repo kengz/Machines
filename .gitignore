@@ -6,6 +6,15 @@ bin-release/
 *.java~
 .DS_Store
 node_modules/
+*.aux
+*.bbl
+*.blg
+*.fdb_latexmk
+*.log
+*.out
+*.synctex.gz
+*.cls
+README.html
 
 # Other files and folders
 .settings/

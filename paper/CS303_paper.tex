@@ -1,0 +1,409 @@
+%description: Math 290 HW Template
+
+%%%%% Beginning of preamble %%%%%
+
+\documentclass[12pt]{article}  %What kind of document (article) and what size
+
+%Packages to load which give you useful commands
+\usepackage{subfig}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{amssymb, amsmath, amsthm}
+
+%Sets the margins
+
+\textwidth = 6.5 in
+\textheight = 9 in
+\oddsidemargin = 0.0 in
+\evensidemargin = 0.0 in
+\topmargin = 0.0 in
+\headheight = 0.0 in
+\headsep = 0.0 in
+\parskip = 0.2in
+\parindent = 0.0in
+
+%defines a few theorem-type environments
+% \newtheorem{theorem}{Theorem}
+% \newtheorem{corollary}[theorem]{Corollary}
+% \newtheorem{definition}{Definition}
+
+\newtheorem{definition}{Definition}
+\newtheorem{fact}{Fact}
+\newtheorem{remark}{Remark}
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}{Proposition}
+\newtheorem{lemma}{Lemma}
+\newtheorem{corollary}{Corollary}
+
+\renewcommand{\labelenumi}{\arabic{enumi}.}
+\renewcommand{\labelenumii}{\arabic{enumi}.\arabic{enumii}.}
+\renewcommand{\labelenumiii}{\arabic{enumi}.\arabic{enumii}.\arabic{enumiii}.}
+\renewcommand{\labelenumiv}{\arabic{enumi}.\arabic{enumii}.\arabic{enumiii}.\arabic{enumiv}.}
+\newlength{\alginputwidth}
+\newlength{\algboxwidth}
+\newcommand{\alginput}[1]{\makebox[1.5cm][l]{ {\sc Input:}} \parbox[t]{\alginputwidth}{{\it #1}}}
+\newcommand{\algoutput}[1]{\makebox[1.5cm][l]{ {\sc Output:}} \parbox[t]{\alginputwidth}{{\it #1}}}
+\newcommand{\algtitle}[1]{\underline{Algorithm \ {\bf #1}} \vspace*{1mm}\\}
+
+%%%%% End of preamble %%%%%
+
+
+
+
+
+
+
+\begin{document}
+
+\title{CS303 Theory of Computation:\\ Implementation of the Machines}
+
+\author{
+{Wah Loon Keng}\thanks{
+Lafayette College,
+Easton, PA 18042, USA.
+kengw{\tt @}lafayette.edu.}
+      % \affaddr{Department of Computer Science}\\
+%       \affaddr{Lafayette College}\\
+%       \affaddr{Easton, PA 18042, USA}\\
+%       \email{gexia@cs.lafayette.edu}
+}
+% \date{}
+\maketitle
+
+\begin{abstract}
+We study and implement all the machines leading up to the Turing machine: DFA, NFA, PDA. To illustrate their relationship and hierarchy of powers, we emphasize the machines as subsets of the more general ones. We start with the Non-deterministic Turing Machine, and increasingly restrict its functions as we descend the hierarchy to the less powerful machines. The polymorphism too allows all machines to run on the same implemented code, and stresses that Turing Machine is the most powerful of all.
+\end{abstract}
+
+
+
+
+
+
+
+
+
+Draft:
+
+1. Formalization of problem
+
+2. Algorithms and decisions
+
+3. AI Implementation and variations
+
+4. results, performance, analysis
+
+5. AI behaviors, surprises
+
+
+
+
+
+
+
+
+
+
+\section{Introduction} \label{intro}
+
+The board game $\emph{World Domination RISK \circledR}$ is a game of military strategy, where players of different factions try to conquer all 42 countries on the map, by deploying armies to attack and defend. We use the classic $\emph{Hasbro}$ version of the game; the rules are well known and can easily be found online, but they will be included as we walk through our algorithms.
+
+In this paper, we first set up our formalization of the game as a graph optimization problem. Next we introduce graph algorithms to carry out each of the game moves, and explain our reasoning behind them. Then, we combine these to implement an AI, with variable personalities based on the parametrization of its internal algorithms. The different AIs then play multiple games against one another, with their results recorded. Finally, we analyze their performances, and find several unusual, interesting strategies discovered by the AIs that are never observed from human players.
+
+This entire project is public on GitHub: \url{https://github.com/kengz/Risk-game}.
+
+
+
+\section{Formalization} \label{formalization}
+
+The game is inherently dependent on the board, which is a world map of 42 countries, interconnected in specific ways. Decisions to attack or defend are based on the distribution of the armies, the surroundings of a location, and connectivity of countries. These motivate our formalizing the game board and algorithms based on an undirected graph. From now we shall refer to the graph representation as $\emph{map}$:
+
+\begin{definition} \label{map}
+A $\textbf{map}$ is a connected, undirected planar graph, with 42 nodes, each representing a country. The nodes are named with indices $0-41$, and are connected the same way as are countries on the game board by undirected edge of weight 1.
+\end{definition}
+
+We assign data fields to each node, namely its country name, the continent it is in, its player owner, the number of armies of the owner in it, its worth and pressure as determined by some metric described below.
+
+
+\begin{definition} \label{region}
+A $\textbf{region}$ is a connected subgraph consisting of nodes all owned by the same player. Each player can own many regions, which together partition the map.
+\end{definition}
+
+\begin{definition} \label{border}
+A $\textbf{border}$ node of an AI is its node that is adjacent to at least an enemy node.
+\end{definition}
+
+\begin{definition} \label{attackable}
+A $\textbf{attackable}$ node for an AI an enemy node adjacent to its border.
+\end{definition}
+
+\begin{definition} \label{shape}
+The $\textbf{shape}$ of a region is the measure of its shape/roundess. To compute the shape, find the maximum and minimum distances between the border nodes in the region, and shape=(max-min)/max. If a region is round, shape = 0; if it is a line, shape = 1.
+\end{definition}
+
+\begin{definition} \label{radius}
+$\textbf{Radius}$ is the measure of shortest distance from an origin node. We identify the neighbors of node $\mathcal{O}$ at radius k to be the nodes whose shortest distance from $\mathcal{O}$ is k.
+\end{definition}
+
+
+Furthermore, we define the fields that will be useful in our algorithms:
+
+\begin{definition} \label{worth}
+The $\textbf{worth}$ of a node is the measure of its importance to an AI, as calculated by its internal metric algorithm, and is used by the AI to prioritize its decisions: which node should it defend/attack first.
+\end{definition}
+
+\begin{definition} \label{pressure}
+The $\textbf{pressure}$ of a node as perceived by an AI is the measure of the average army distribution around the node, up to 5 unit radii away. It is calculated by the AI's internal metric and used to prioritize decisions.
+\end{definition}
+
+Note that the worth and pressure of a node are not the same when calculated by opposing AIs due to different perceptions, metric and AI personalities. Each AI will be calculating these values for all 42 nodes at each turn.
+
+Finally, we introduce a data structure as the raw representation of overall army distribution on the map for various calculations:
+
+\begin{definition} \label{RMAM}
+The $\textbf{Radius Matrix (RM)}$ from an origin node $\mathcal{O}$ is the matrix that better represents the connectivity of neighbor nodes of the origin within some radius. It is enumerated by the Radius Matrix Algorithm below, and each entry is the name of some node.
+
+Its corresponding $\textbf{Army Matrix (AM)}$ is a different representation of the RM, with each entry now being $z \in \mathbb{Z}$, where $|z|$ is the number of armies at the node, and $z$ is positive if the node is owned by the calculating AI, and negative otherwise.
+\end{definition}
+
+
+
+
+
+
+
+\section{Algorithms}
+
+We now enumerate the algorithms for each step of the game, which will collectively form the final algorithm used by the AI to play the game.
+
+
+\subsection{The Matrix Algorithms}
+
+\algtitle{Radius Matrix (RM) for an origin node $\mathcal{O}$}
+Starting from an origin node $\mathcal{O}$, initialize an empty matrix for its RM,
+\begin{enumerate}
+	\item Add the index of each adjacent node (at radius 1) of $\mathcal{O}$ to a new row in RM.
+	\item Repeat for $i \in \{2,3,...,n\}$, where $n$ is the maximum radius covered:
+	
+	For each entry $p$ at column $i$, get all $n_p$ of its adjacent nodes at radius $i+1$ from $\mathcal{O}$. 
+
+	\item Duplicate the row of entry $p$ while appending to it each of the $n_p$ adjacent nodes at column $i+1$. If $n_p=0$, append $``empty"$ instead. The process is akin to a Cartesian product.
+
+	\item Return the RM for $\mathcal{O}$.
+\end{enumerate}
+
+Note that the column number will coincide with the radius from $\mathcal{O}$. The RM with $n$ columns is a representation of the connectivity from the origin up to radius $n$, where each row is the shortest path from the origin to a point at radius $n$, and there may exist many such paths.
+
+\algtitle{Army Matrix (AM) for an origin node $\mathcal{O}$}
+We can convert an RM into AM, a representation using the number of armies,
+\begin{enumerate}
+	\item Find the RM for node $\mathcal{O}$ using the RM algorithm.
+	\item For each entry $p$ in RM, if node $p$ has the same owner as $\mathcal{O}$, replace the entry with the number of army at $p$; else, replace with the negative of the number of army at $p$. If an entry $p$ is $``empty"$, append 0 instead.
+	\item return the AM for $\mathcal{O}$.
+\end{enumerate}
+
+
+This transforms an RM into its alternate form AM, which gives a representation of the army distribution and connectivity around the origin node $\mathcal{O}$. This matrix can be used for calculating the $\textbf{pressure}$ from definition \ref{pressure}. For our project we calculate the matrices up to radius 5, which we think is sufficient given that per game turn a player can only move adjacently among nodes.
+
+
+
+
+
+\subsection{The Pressure Algorithm}
+
+The pressure of each node from an AI's point of view is the average number of army surrounding the node. More positive pressure indicates the node is a better stronghold of the AI; more negative pressure indicates is surrounded by more enemies.
+
+The calculation of pressure depends on the AI's perception of threat, which can be represented using a metric that varies based on its personality.
+
+\begin{definition}
+The $\textbf{threat perception}$ of an AI is the way it sees the threat of army distribution up to some radius away poses on an origin node. E.g. 10 enemy armies further away poses less threat than 5 enemy armies nearby. The $\textbf{threat perception}$ is quantified by defining a metric: a normalized vector or length = max radius of AM, where the individual value of the vector is the weight multiplied to the army number at that radius. The procedure is describe below.
+\end{definition}
+
+\algtitle{The Metric Algorithm}
+To enumerate the metric for an AI's threat perception, with scope radius = 5,
+\begin{enumerate}
+	\item Choose a weight function, for example, constant, Gaussian,
+	\item Evaluate function values for with the input distance vector $\{1,2,3,4,5\}$
+	\item Renormalize the output vector and return it as the metric vector.
+\end{enumerate}
+
+This metric vector $\mathbf{w}$ is then dotted with a row $\mathbf{r}$ in the AM, which is a list of number of armies at incremental distance away from an origin node $\mathcal{O}$, and the partial pressure $\emph{PP}$ for it is:
+$$\emph{PP}(\mathbf{r}) = \mathbf{w} \cdot \mathbf{r}$$
+
+
+\algtitle{The Pressure Algorithm}
+The AI calculates the pressure for each node using its personality trait $\textbf{threat-perception}$, or the metric vector $\mathbf{w}$:
+\begin{enumerate}
+	\item Update the data fields of the map and call the AM algorithm to compute the AMs for all 42 nodes.
+	\item For each node $\mathcal{O}$, compute the dot product between $\mathbf{w}$ and each row of the node's AM; the result is a column vector $\mathbf{c}$.
+	\item The first column of the original RM is a repeated list of $m$ adjacent nodes of $\mathcal{O}$, suppose each node $i$ repeats $q_i$ times in the column, so in total the column has length $q_1 + q_2 + \cdots + q_m$. Renormalize this sequence into $nq_1 + nq_2 + \cdots + nq_m$ For each batch $q_i$ of the column vector $\mathbf{c}$ from above, take its mean, then multiply by the renormalized weight $nq_i$. Then sum all $m$ of the results, call this scalar $s(\mathcal{O})$.
+	\item Now that the column $\mathbf{c}$ has been reduced to a scalar representing the average army distribution around the origin $\mathcal{O}$, account for the number of armies (sign-sensitive, negative for enemy) here $a(\mathcal{O})$ by adding the scalar, and return the pressure of node $\mathcal{O}$, $P(\mathcal{O}) = s(\mathcal{O}) + a(\mathcal{O})$.
+\end{enumerate}
+
+
+Thus at each turn, the AI updates the data fields and calculates the pressure, i.e. the average number of surrounding armies, for each node, using its threat perception metric.
+
+
+
+
+\subsection{The Worth Algorithm}
+
+\algtitle{The Worth Algorithm}
+At each turn, the AI evaluates the worth of each node to prioritize its attacks and defenses. Suppose it considers $m$ factors, each of which assumes a real positive value, with more positive being more worthy. To compute the final worth scalar, simply order the $m$ factors from the most vital, and dot it with a factor vector $\{10^{m-1}, ..., 100, 10, 1\}$.
+
+For our AI, we consider the following factors (ordered from the most important). For each node $\mathcal{O}$ calculate and append to the list of factors:
+
+\begin{enumerate}
+	\item continent-fraction = $\frac{\text{(number of nodes with the same owner in the same continent $\mathcal{O}$)}}{\text{(total number of nodes in the continent)}}$
+	\item If $\mathcal{O}$ is own node, the region-index: Enumerate for each player its nodes, and group them by regions, then order them from the biggest to the smallest regions. The region-index of $\mathcal{O}$ is its index in this list. Or if $\mathcal{O}$ is enemy, the attackable index: of the region list enumerated above, extract the sublist with nodes that are attackable, i.e. is an enemy adjacent to one of your nodes. The attackable index of $\mathcal{O}$ is its index in this sublist; -1 otherwise.
+	\item shape: find the region $\mathcal{O}$ is in and compute the shape as in definition \ref{shape}.
+	\item degree: the degree of $\mathcal{O}$, i.e. the number of adjacent nodes it has.
+	\item pressure: as calculated from the pressure algorithm.
+	\item Finally, return the dot product between this factor list and $\{10^{4}, 1000, 100, 10, 1\}$.
+\end{enumerate}
+
+
+After obtaining an ordered list of worth nodes, we can partition it while preserving the order into lists of border nodes and attackable nodes, and reorder them based on strategies. Furthermore, the AI makes it context-sensitive by remembering the pressures from the past turn, and reorder the list based on pressure-drop between turns.
+
+
+
+To justify our factors above, conquering a whole continent gives a player extra armies per turn while strengthening the region. Furthermore, a larger region is harder to attack than a smaller region, thus we place more importance on the nodes there. 
+
+The shape of a region is vital for defense and army mobility during fortification. This is the classic problem of minimizing the surface/volume ratio, or in this lower dimensional case, the perimeter/surface ratio. Intuitively, a thin region is vulnerable, and has bad army mobility. A thick, concentric shape is stronger. The average distance between nodes is also shorter and thus aids mobility. Moreover, a node with higher degree improves mobility since it can reach many other nodes.
+
+The pressure measures the ease of attacking or defending a node; the less negative a node is, the less enemy presence it has. It is wise to not attack the enemy's stronghold, but to seek its weak point of entry, which can be detected from a less-negative pressure.
+
+
+\subsection{The Priority Algorithm}
+At each game turn, the AI updates the priority nodes to attack/defend. The list of priority nodes depends on the AI's personality trait $\textbf{priority}$, whether it is agressive (attack-then-defend) or defensive (defend-then-attack).
+
+\algtitle{The Priority Algorithm}
+\begin{enumerate}
+	\item Update the data fields for the AI.
+	\item Call the pressure algorithm on the map.
+	\item Call the worth algorithm on the map.
+	\item Repartition the worth nodes and reorder by attackables/borders first based on the AI's personality, whether agressive or defensive. Furthermore, for the attackable, choose the best origin of attack by the highest pressure.
+\end{enumerate}
+
+
+
+
+
+
+
+\subsection{The Placement Algorithm}
+This describes how the AI places the armies into the its priority nodes based on its personality trait $\textbf{placement}$.
+
+\algtitle{The Placement Algorithm}
+\begin{enumerate}
+	\item If the trait is $\textbf{cautious}$, place armies along its  priority nodes (if is enemy, use the best origin of attack) until all pressures are $>0$, then with the extra armies, place 4 each down the same list; repeat until none left.
+	\item If the trait is $\textbf{tactical}$, place armies down the list until node pressure is $>4$, then with extra, place 4 each down the list; repeat until none left.
+\end{enumerate}
+
+
+
+
+
+
+
+\subsection{The Attack Algorithm}
+The AI decides to launch attacks from the best attack origin (calculate with in priority list) based on its personality trait $\textbf{attack}$.
+
+\algtitle{The Attack Algorithm}
+For all attackables down the priority list,
+\begin{enumerate}
+	\item If the trait is $\textbf{rusher}$, the AI harassess constantly, i.e. while the best attack origin has 2 more armies than the enemy target, keep attacking before moving to next target.
+	\item If the trait is $\textbf{carry}$, same as above, but the difference threshold is 4 (higher). Furthermore, the AI will accumulate the cards to reserve more armies for late game.
+\end{enumerate}
+
+
+
+
+
+
+
+
+\subsection{The Fortifying Algorithm}
+All AIs use the same fortifying algorithm.
+
+\algtitle{The Fortifying Algorithm}
+
+\begin{enumerate}
+	\item Find the border node $\mathcal{O}$ with the lowest pressure, and find a non-border ally node with higher pressure, transfer all but 1 troop to the border node if possible. This is to always push the unused central forces out to the borders where armies are mostly needed.
+	\item If no fortification done above, find a border node with the highest pressure, and transfer any neighboring armies (all but 1) to it. This is for the accumulation of armies during late game by making strong node even stronger.
+\end{enumerate}
+
+
+This algorithm aims to create a center-weak border-strong army distribution within a region with, that is to utilize the maximum number of armies by putting them to the border nodes. Such distribution is efficient for both offense and defense. The second part of the algorithm kicks in when there is less border nodes during the late game, when one player controls a larger region. This will accumulate all armies toward a border node to overwhelm the enemy, hopefully ending the game quicker.
+
+
+
+
+
+
+
+\section{AI Algorithms and Personalities}
+
+We now put everything together to form the AI, which has four personality traits parametrized in its algorithms: 
+
+\begin{enumerate}
+	\item The $\textbf{threat perception}$ trait /metric in the Pressure Algorithm; function variations: \{Constant, Survival\}.
+	\item The $\textbf{priority}$ trait in the Priority Algorithm; variations: \{agressive, defensive\}.
+	\item The $\textbf{placement}$ trait in the Placement Algorithm; variations: \{cautious, tactical\}.
+	\item The $\textbf{attack}$ trait in the Attack Algorithm; variations: \{rusher, carry\}.
+\end{enumerate}
+
+Thus there are $2^4 = 16$ AI personalities, and more if we allow richer variations.
+
+
+Corresponding to the game moves per turn:
+\begin{enumerate}
+\item Getting and placing new armies;
+\item Attacking, if you choose to, by rolling the dice; 
+\item Fortifying your position (moving troops between an adjacent pair of your nodes),
+\end{enumerate}
+
+the AI has these primary methods:
+\begin{enumerate}
+\item Update: Call the Priority and Worth algorithms.
+\item Get-and-Place-Armies: Call the Placement Algorithm.
+\item Attack: Call the Attack Algorithm as many times as wanted.
+\item Fortify: Call the Fortify Algorithm.
+\end{enumerate}
+
+
+
+A game can have as many participating AIs as permitted by the rules. During the initial game setup, countries are randomly assigned to the AIs. Then, the AIs take turn to call their Update and Get-and-Place-Armies methods to complete the setup. Then the game begins and the AIs take turn to call all their primary methods in sequence, until the game terminates, or ties at the maximum number of rounds.
+
+As opposed to physical game, the virtual game has no limit on the number of army pieces $-$ it just keeps creating more as needed; nor it has the limit on the cards $-$ it keeps reshuffling a new deck once an old one runs out.
+
+
+
+
+\section{Our Experiments}
+
+We begin our study from the simplest case: games with 2 players. Note that according to the rules, there is an inactive neutral player, and we mimic that by adding a third AI that is muted.
+
+
+
+
+
+
+\section{Conclusion}
+This paper sets out to solve the problem of the identification of the class of a block code. We do so by introducing a new \emph{Canonical Bundled Form} as a unique class representation of the block code.
+
+
+The Bundled Form and its algorithm too solves the special problem of determining the equivalence between matrices under column/row swapping, and the general problem which allows column-wise letter-permutation to the sub-problem. Row-permutation can be done by transposing the matrices.
+
+
+
+
+\section{Citations}
+
+
+H. Fripertinger. Enumeration, construction and random generation of block codes. \emph{Designs, Codes and Cryptography,} Volume 14 Issue 3: 213-219, 1998.
+
+
+
+
+\end{document} 
+
