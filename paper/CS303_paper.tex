@@ -173,7 +173,7 @@ For a hypothetical machine to be more powerful that a Turing machine, not only i
 
 Finally, we theorize that the human brain is not beyond, but is in the class of Turing machines. Regardless of how massive the human memory(tape) is, there is still countably finite units of it in the brain, which makes it discrete. 
 
-We are still trying to understand and reconstruct the human brain with a computer, or to say, we are looking for a Turing machine that mimics our brain. This task is as daunting as searching for one rational number within the space of rational numbers, because we are looking for $\emph{one}$ Turing machine among all countably infinite Turing machine. A search by brute force is simply impossible.
+We are still trying to understand and reconstruct the human brain with a computer, or to say, we are looking for a Turing machine that mimics our brain. This task is as daunting as searching for one rational number within the space of rational numbers, because we are looking for $\emph{one}$ Turing machine among all countably infinite Turing machine. A search by brute force is simply impossible. Nevertheless, the human brain is a Turing machine.
 
 To reiterate, the class of Turing machines is the most powerful class of machines that is physically realizable, and there is nothing in our physical theories that can trancend it.
 
@@ -231,22 +231,25 @@ The class of PDAs is equivalent to the class of Context Free Languages (CFL), wh
 
 
 \subsubsection{Implementing PDA using NTM}
-PDA has the non-determinism that is captured naturally by the NTM. At each node of a tree branch is an instance of the PDA, and we use a restricted TM to simulate it. This is done by converting the definition of a PDA into a restricted definition of a TM. The TM appends the stack to the end of the input on its tape, and moves its head back and forth to read the next input and read/write on the top of the stack.
-
-The conversion algorithm is given as follow:
+PDA has the non-determinism that is captured naturally by the NTM. At each node of a tree branch is an instance of the PDA, and we use a restricted TM to simulate it. This is done by converting the definition of a PDA into a restricted definition of a TM. The TM appends the stack to the end of the input on its tape, and moves its head back and forth to read the next input and read/write on the top of the stack:
 
 \algtitle{Conversion of a PDA to a restricted TM}
-Starting from an origin node $\mathcal{O}$, initialize an empty matrix for its RM,
+Given a PDA, all its definitions correspond directly to the definition of a TM, except for the transittion table, which we illustrate here. For every PDA rule in the form of instantaneous description $\delta(q_1, a, \alpha) = (q_2, \beta)$, add to TM the rules:
 \begin{enumerate}
-	\item Add the index of each adjacent node (at radius 1) of $\mathcal{O}$ to a new row in RM.
-	\item Repeat for $i \in \{2,3,...,n\}$, where $n$ is the maximum radius covered:
-	
-	For each entry $p$ at column $i$, get all $n_p$ of its adjacent nodes at radius $i+1$ from $\mathcal{O}$. 
-
-	\item Duplicate the row of entry $p$ while appending to it each of the $n_p$ adjacent nodes at column $i+1$. If $n_p=0$, append $``empty"$ instead. The process is akin to a Cartesian product.
-
-	\item Return the RM for $\mathcal{O}$.
+	\item $\delta(q_1, a) = (q_{1a}, \dot a, R)$ to mark $a$ as read, then move right,
+	\item $\delta(q_{1a}, t) = (q_{1a}, t, R)$ for all $t \in \Sigma$ to keep moving right until,
+	\item $\delta(q_{1a}, b) = (q_{1ab}, b, L)$ at the end of stack, where $b$ is the blank symbol, move left,
+	\item the top of stack:
+	\begin{enumerate}
+		\item If $\beta = \epsilon$ (nothing is pushed), then $\delta(q_{1ab}, \alpha) = (q_{2a}, b, L)$ to replace $\alpha$ with $b$,
+		\item else if $\beta = \alpha$ (push back the popped $\alpha$), then $\delta(q_{1ab}, \alpha) = (q_{2a}, \alpha, L)$
+		\item else $\beta$ contains a new symbol to be pushed to stack, $\delta(q_{1ab}, \alpha) = (q_{1ab\alpha}, \alpha, r)$ to push back the popped $\alpha$, move right to $b$, and $\delta(q_{1ab\alpha}, b) = (q_{2a}, \gamma, L)$ to push the new symbol $\gamma \in \beta$ to the top of stack, then move left,
+	\end{enumerate}
+	\item $\delta(q_{2a}, t) = (q_{2a}, t, L)$ for all $t \in \Sigma$ to keep moving left until,
+	\item $\delta(q_{2a}, \dot a) = (q_{2}, {\tt x}, R)$ reaching at the input symbol $\dot a$ marked earlier; cross it out as processed with ${\tt x}$, and proceed to the right to carry out the next computation for PDA.	
 \end{enumerate}
+
+
 
 
 
