@@ -71,31 +71,8 @@ kengw{\tt @}lafayette.edu.}
 \maketitle
 
 \begin{abstract}
-We study and implement all the machines leading up to the Turing machine: DFA, NFA, PDA. To illustrate their relationship and hierarchy of powers, we emphasize the machines as subsets of the more general ones. We start with the Non-deterministic Turing Machine, and increasingly restrict its functions as we descend the hierarchy to the less powerful machines. The polymorphism too allows all machines to run on the same implemented code, and stresses that Turing Machine is the most powerful of all.
+We study and implement all the machines leading up to the Turing machine: DFA, NFA, PDA. To illustrate their relationship and hierarchy of powers, we emphasize the machines as subsets of the more general ones. We start with the Non-deterministic Turing Machine, and increasingly restrict its functions as we descend the hierarchy to the less powerful machines. The polymorphism allows all machines to run on the same implemented code, and stresses that Turing Machine is the most powerful of all.
 \end{abstract}
-
-
-
-
-
-
-
-
-
-Draft:
-
-1. Formalization of problem
-
-2. Algorithms and decisions
-
-3. AI Implementation and variations
-
-4. results, performance, analysis
-
-5. AI behaviors, surprises
-
-
-
 
 
 
@@ -105,17 +82,84 @@ Draft:
 
 \section{Introduction} \label{intro}
 
-The board game $\emph{World Domination RISK \circledR}$ is a game of military strategy, where players of different factions try to conquer all 42 countries on the map, by deploying armies to attack and defend. We use the classic $\emph{Hasbro}$ version of the game; the rules are well known and can easily be found online, but they will be included as we walk through our algorithms.
 
-In this paper, we first set up our formalization of the game as a graph optimization problem. Next we introduce graph algorithms to carry out each of the game moves, and explain our reasoning behind them. Then, we combine these to implement an AI, with variable personalities based on the parametrization of its internal algorithms. The different AIs then play multiple games against one another, with their results recorded. Finally, we analyze their performances, and find several unusual, interesting strategies discovered by the AIs that are never observed from human players.
+This paper assumes the reader's familiarity with the theory of computation, and with core ideas such as computation history, configuration, languages and set theory. This entire project is written in ${\tt Javascript}$, and is public on GitHub at: \url{https://github.com/kengz/Machines}.
 
-This entire project is public on GitHub: \url{https://github.com/kengz/Risk-game}.
+The Turing Machine(TM) is the most general class of computing machine that we know of. Its power is measured by the problems it can solved, or equivalently, the languages it can decide. In the universe of languages, we can roughly classify from the most powerful to the ever strictly less powerful classes of languages as follow:
+$$\emph{Turing-recognizable} \supset \emph{Turing-decidable} \supset \emph{Context Free} \supset \emph{Regular}$$
+Equivalently when expressed with machines, we get the hierarchy:
+$$\emph{TM} \supset \emph{TM (halting)} \supset \emph{PDA} \supset \emph{NFA/DFA}$$
+Furthermore, a machine is also equivalently identified with the class of problems it can solve, thereby establishing the equivalence among languages, classes of problems, and classes of machines. This insight will be useful later.
+
+With this idea in mind, our project implements all these machines by starting from the most generic class $-$ the Turing machine, and progressively restricts its power as we descend the hierarchy. The aim is to illustrate the factors that affect the power of a machine and differentiate the classes. 
+
+Implementation by restriction also allows the use of polymorphism, which in our opinion expresses the idea cleaner and more naturally.
+
+Most reasonable variants of the Turing machine are equivalent in power, thus this allows us to choose one that works best for our purpose. We choose the Non-deterministic Turing Machine(NTM) due to its tree structure that represents non-determinism more clearly than an equivalent Turing machine.
 
 
 
-\section{Formalization} \label{formalization}
 
-The game is inherently dependent on the board, which is a world map of 42 countries, interconnected in specific ways. Decisions to attack or defend are based on the distribution of the armies, the surroundings of a location, and connectivity of countries. These motivate our formalizing the game board and algorithms based on an undirected graph. From now we shall refer to the graph representation as $\emph{map}$:
+
+
+Draft:
+
+1. Turing machine, use NTM for tree. Present parts of machines. Memory.
+
+2. slowly descend the hierarchy, with more restriction on machines. changes in memory access
+
+3. describe language class and restriction by algorithm
+
+
+
+\section{General Purpose Machine} \label{NTM}
+
+To simulate all the other machines, our choice of this general purpose machine is the Non-deterministic Turing Machine(NTM), which is a computation history with instances of TM configurations branching out non-deterministically from its start. 
+
+To recap, a configuration is a triple: the machine's state, its head location, and its tape content. This can encode the entirety of not only the TM, but also the subordinate machines.
+
+The NTM can be represented using a tree structure, whose node is a machine configuration, with root as the starting configuration. The tree depth of a node is the number of computation steps it is from the root: each step of computation non-deterministically expands the tree by one level down, and epsilon transitions expand the tree sideway on the same level. When expanding, the original node gets copied, and a computation step is applied to get the next configuration, which is then added to the tree.
+
+For practicality, we want our machines to be halting, i.e. all problems must be decidable. The NTM decides at the first level of tree that contains a halting(accepting/rejecting) configuration. Each class of machines may have a slightly different halting configuration.
+
+The NTM as a computation history represents non-determinism naturally; it can also capture epsilon transitions by side-way expansion. A non-deterministic computation history is simply a degenerate tree without branching. The full power of a TM is captured locally in the configuration node and manifested from its components: the head, the tape, and its transition functions.
+
+
+
+
+\section{Machine Powers and Restrictions}
+
+\subsection{Turing Machine}
+
+\begin{definition}
+A $\textbf{Turing Machine}$ is a 7-tuple:
+\begin{enumerate}
+	\item $Q$: the non-empty set of machine states,
+	\item $\Sigma$: the non-empty set of tape symbols,
+	\item $\Gamma \subset \Sigma$: the set of input symbols,
+	\item $b$: the blank symbol,
+	\item $\delta: Q \times \Sigma \mapsto Q \times \Sigma \times \{L, R\} $: the transition functions,
+	\item $q_0 \in Q$: the starting state,
+	\item $F \subset Q$: the set of accept states.
+\end{enumerate}
+
+As an equivalent, more physical description, the machine is a configuration which has:
+\begin{enumerate}
+	\item a state,
+	\item an countably infinite tape which serves as its memory,
+	\item a head that has random access to read and write on the tape.
+\end{enumerate}
+\end{definition}
+
+
+Any discrete information is quantizable, and can be encoded bijectively into a binary string $-$ this is the hallmark of Shannon's information theory. Therefore, w.l.o.g., TM can take any encoded binary string as its tape input and manipulate the information using its random access. Since the sets of states and tape symbols are finite, each transition table is a finite subset of the power set of all countably finite states and symbols. The collection of all transition tables is therefore all finite subsets in the power set, and its cardinality is countably infinite.
+
+This puts the size of the Turing Machine class at countably infinite, that is, it can solve that many classes of problems/languages. However, this is insufficient to solve $\emph{all}$ of the problems as there exists even more of them. This statement is reflected in the Godel's Incompleteness Theorem, or equivalently expressed with machines, Turing's Undecidable Theorem.
+
+As an interesting sidenote, the relationship above generalizes properly to quantum information theory and quantum machines. The only major addition is that the information bit used in quantum theory is a $\emph{qubit}$, which is an orthogonal Hilbert space basis that can be superpositioned. However, this does not give the quantum machines too much more power albeit its extra features, and we shall not dwell into it.
+
+So we ask, ``how powerful is the class of Turing machines?'' We provide a sketch of idea to argue that this is the absolute upper limit that is physically realizable, that is, Turing machines are the most powerful machines that can exist in this physical universe.
+
 
 \begin{definition} \label{map}
 A $\textbf{map}$ is a connected, undirected planar graph, with 42 nodes, each representing a country. The nodes are named with indices $0-41$, and are connected the same way as are countries on the game board by undirected edge of weight 1.
