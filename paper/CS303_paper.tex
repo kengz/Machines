@@ -252,6 +252,52 @@ Given a PDA, all its definitions correspond directly to the definition of a TM, 
 
 
 
+\subsubsection{DPDA}
+
+There is a deterministic variant of the PDAs called DPDA that is less powerful. Although we omit this class called the DCFL from our major discussions, it is worth noting that DCFL sits in between CFL and the regular languages. The algorithm above will accept and convert its definition into a TM, which will then have a degenerate, deterministic tree structure when computing.
+
+The DPDA is less powerful due to it lacking the non-deterministic structure. It cannot explore different possibilities of computation history in parallel, and this imposes an even stronger restriction on the use of its stack memory $-$ it can only be popped and pushed in a single way for a given instance of DPDA. 
+
+A more elegant interpretation is this: we can view a DPDA as a single thread in the whole tree of PDA which starts from the same root but ends in a different leaf of the tree. Therefore, a PDA is just a collection of multiple parallel instances of DPDA; a DPDA is an instance in the whole tree of PDA. Whereas a PDA accepts whenever one of its leaves accepts, a DPDA as a single thread will only accept if its single leaf accepts. 
+
+However, bear in mind that the presence of memory stack is crucial to setting DPDA and PDA apart, because when we remove the stack, we will restore equivalence between the deterministic and non-deterministic variants of a machine, as we shall see below.
+
+
+% without the stack, and do breath-first search by going in reverse deterministically, can always retrieve.
+% but can't do so for PDA because we cannot repush the popped value cuz it's gone, and we dunno what is was prior to popping
+
+\subsection{Non-deterministic and Deterministic Finite Automata (NFA and DFA)}
+
+NFA and DFA have a similar tree-and-thread relationship: NFA is the whole tree, DFA is a single thread. Despite that, in contrast to PDA and NPDA, DFA and NFA are equivalent. The explanation is as follow:
+
+DFA can simulate an NFA by gradually tracing out all of its possible thread, because a DFA a reversible. It consists only of an immutable input tape, and its head moves in a single direction, while its state transition is completely determined by its transition table. Say a DFA traverses down a path in the tree, it can go back up deterministically by taking the inverse of its $\delta$ transition function, which is invertible. This allows a DFA to traverse and thus simulate an NFA tree reliably without loss of information.
+
+However, this equivalence does not apply for DPDA and PDA, because the computation for DPDA is not invertible. A DPDA cannot go back up its thread to traverse the other part of the PDA tree because there will be a loss of information when it cannot know whether it has previously pushed a stack symbol, or what it has popped. This makes a computation for PDA irreversible, and causes the DPDA to be less powerful.
+
+The equivalence is restored for TM and NTM because the machines have full access to its memory. With some care they can prevent information loss and make computation reversible. This is reflected in the proof of equivalence between TM and NTM.
+
+We now define the DFA, which is equivalent to the NFA analogous to how TM is equivalent to NTM via the tree structure.
+
+\begin{definition}
+A $\textbf{Deterministic Finite Automat}$ is a 5-tuple:
+\begin{enumerate}
+	\item $Q$: the non-empty set of machine states,
+	\item $\Sigma$: the non-empty set of tape symbols,
+	\item $\Gamma \subset \Sigma$: the set of input symbols,
+	\item $b$: the blank symbol,
+	\item $\delta: Q \times \Sigma \mapsto Q \times \Sigma \times \{L, R\} $: the transition table,
+	\item $q_0 \in Q$: the starting state,
+	\item $F \subset Q$: the set of accept states.
+\end{enumerate}
+
+As an equivalent, more physical description, the machine is a configuration which has:
+\begin{enumerate}
+	\item a state,
+	\item an countably infinite tape which serves as its memory,
+	\item a head that has random access to read and write on the tape.
+\end{enumerate}
+\end{definition}
+
 
 
 \begin{definition} \label{map}
