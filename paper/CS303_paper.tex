@@ -129,7 +129,7 @@ The NTM as a computation history represents non-determinism naturally; it can al
 
 \section{Machine Powers and Restrictions}
 
-\subsection{Turing Machine}
+\subsection{Turing Machine (TM)}
 
 \begin{definition}
 A $\textbf{Turing Machine}$ is a 7-tuple:
@@ -138,7 +138,7 @@ A $\textbf{Turing Machine}$ is a 7-tuple:
 	\item $\Sigma$: the non-empty set of tape symbols,
 	\item $\Gamma \subset \Sigma$: the set of input symbols,
 	\item $b$: the blank symbol,
-	\item $\delta: Q \times \Sigma \mapsto Q \times \Sigma \times \{L, R\} $: the transition functions,
+	\item $\delta: Q \times \Sigma \mapsto Q \times \Sigma \times \{L, R\} $: the transition table,
 	\item $q_0 \in Q$: the starting state,
 	\item $F \subset Q$: the set of accept states.
 \end{enumerate}
@@ -152,13 +152,65 @@ As an equivalent, more physical description, the machine is a configuration whic
 \end{definition}
 
 
-Any discrete information is quantizable, and can be encoded bijectively into a binary string $-$ this is the hallmark of Shannon's information theory. Therefore, w.l.o.g., TM can take any encoded binary string as its tape input and manipulate the information using its random access. Since the sets of states and tape symbols are finite, each transition table is a finite subset of the power set of all countably finite states and symbols. The collection of all transition tables is therefore all finite subsets in the power set, and its cardinality is countably infinite.
+Any discrete information is quantizable, and can be encoded bijectively into a binary string $-$ this is the hallmark of Shannon's information theory. Therefore, w.l.o.g., TM can take any encoded binary string as its tape input and manipulate the information using its random access. 
 
-This puts the size of the Turing Machine class at countably infinite, that is, it can solve that many classes of problems/languages. However, this is insufficient to solve $\emph{all}$ of the problems as there exists even more of them. This statement is reflected in the Godel's Incompleteness Theorem, or equivalently expressed with machines, Turing's Undecidable Theorem.
+Since the sets $Q, \Sigma$ are finite, each transition table $\delta$ is a finite subset of the power set of all countably finite permutation of $Q \times \Sigma \mapsto Q \times \Sigma \times \{L, R\}$, taken over all possible sets of $Q, \Sigma$. The collection of all such transition tables is simply all finite subsets in this power set, thus its cardinality is countably infinite.
 
-As an interesting sidenote, the relationship above generalizes properly to quantum information theory and quantum machines. The only major addition is that the information bit used in quantum theory is a $\emph{qubit}$, which is an orthogonal Hilbert space basis that can be superpositioned. However, this does not give the quantum machines too much more power albeit its extra features, and we shall not dwell into it.
+This puts the size of the Turing Machine class at countably infinite, that is, it can solve that many classes of problems/languages. However, this is insufficient to solve $\emph{all}$ classes of problems as there exists much more of them. This statement is reflected in the Godel's Incompleteness Theorems, or equivalently expressed with machines in Turing's Undecidability Theorem.
 
-So we ask, ``how powerful is the class of Turing machines?'' We provide a sketch of idea to argue that this is the absolute upper limit that is physically realizable, that is, Turing machines are the most powerful machines that can exist in this physical universe.
+As an interesting sidenote, the relationship above generalizes properly to quantum information theory and quantum machines. The only major addition is that the information bit used in quantum theory is a $\emph{qubit}$, which is an orthogonal Hilbert space basis that can be superpositioned. However, this does not give the quantum machines too much more power albeit its extra features, and we shall not dwell into the details.
+
+
+
+
+
+\subsubsection{Power of the Class of TMs - a Quick Discourse}
+``How powerful is the class of Turing machines,'' one may ask. We argue that it is the absolute upper bound that is physically realizable. The theorems of Godel and Turing partition the set of all problems into decidable(solvable) and undecidable. The former can be solved by a Turing machine; the latter cannot be solved in any way.
+
+Moreover, we posit that there cannot exist a physically realizable machine that is more powerful than a Turing machine. Here is why: in physics, especially in quantum theory, all observables are quantized, i.e. all measurements in the universe are discrete. Regardless of the continuum we can use to formalize physical theories, the physical reality that we can access is discrete, so we can theorize: $\emph{the continuum of the real number is not physically realizable}$.
+
+For a hypothetical machine to be more powerful that a Turing machine, not only it has to do the impossible by solving beyond the class of decidable problems, it will also have to transcend the countable infinity, i.e. the hypothetical machine has to be on the level of the continuum. But this is not physically realizable as we said earlier; even if it were, by quantum theory, all the observables we extract from it will still not be on the continuum.
+
+Finally, we theorize that the human brain is not beyond, but is in the class of Turing machines. Regardless of how massive the human memory(tape) is, there is still countably finite units of it in the brain, which makes it discrete. 
+
+We are still trying to understand and reconstruct the human brain with a computer, or to say, we are looking for a Turing machine that mimics our brain. This task is as daunting as searching for one rational number within the space of rational numbers, because we are looking for $\emph{one}$ Turing machine among all countably infinite Turing machine. A search by brute force is simply impossible.
+
+To reiterate, the class of Turing machines is the most powerful class of machines that is physically realizable, and there is nothing in our physical theories that can trancend it.
+
+
+
+
+
+
+
+
+
+\subsection{Pushdown Automata (PDA)}
+
+
+\begin{definition}
+A $\textbf{Pushdown Automata}$ is a 6-tuple:
+\begin{enumerate}
+	\item $Q$: the non-empty set of machine states,
+	\item $\Sigma$: the non-empty set of stack symbols,
+	\item $\Gamma$: the set of input symbols,
+	\item $\delta: Q \times \Gamma \times \Sigma \mapsto Q \times \Sigma $: the transition table,
+	\item $q_0 \in Q$: the starting state,
+	\item $F \subset Q$: the set of accept states.
+\end{enumerate}
+
+Note that this is obtained by restricting the definition of a Turing machine. PDA has no blank symbols, and we can extend $\Sigma$ to include $\Gamma$ so that $\Sigma$ can be the set of all tape symbols, just as in a TM. This suggests that we can fit the input string and the stack together onto one single tape, and obviously we can simulate the actions of a PDA by a TM.
+
+As an equivalent, more physical description, the machine is a configuration which has:
+\begin{enumerate}
+	\item a state,
+	\item an countably infinite tape which serves as its memory, with the stack concatenated to the end of the input,
+	\item a head that can only read the input portion, and read and write on the stack portion.
+\end{enumerate}
+\end{definition}
+
+
+
 
 
 \begin{definition} \label{map}
