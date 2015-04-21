@@ -122,7 +122,7 @@ The NTM can be represented using a tree structure, whose node is a machine confi
 
 For practicality, we want our machines to be halting, i.e. all problems must be decidable. The NTM decides at the first level of tree that contains a halting(accepting/rejecting) configuration. Each class of machines may have a slightly different halting configuration.
 
-The NTM as a computation history represents non-determinism naturally; it can also capture epsilon transitions by side-way expansion. A non-deterministic computation history is simply a degenerate tree without branching. The full power of a TM is captured locally in the configuration node and manifested from its components: the head, the tape, and its transition functions.
+The NTM as a computation history represents non-determinism naturally; it can also capture epsilon transitions by side-way expansion. A non-deterministic computation history is simply a degenerate tree without branching. The full power of a TM is captured locally in the configuration node and manifested from its components: the head, the tape, and its transition functions. Since NTM and TM are equivalent, we provide the definition for only TM below.
 
 
 
@@ -152,7 +152,7 @@ As an equivalent, more physical description, the machine is a configuration whic
 \end{definition}
 
 
-Any discrete information is quantizable, and can be encoded bijectively into a binary string $-$ this is the hallmark of Shannon's information theory. Therefore, w.l.o.g., TM can take any encoded binary string as its tape input and manipulate the information using its random access. 
+Any discrete information is quantizable, and can be encoded bijectively into a binary string $-$ this is the hallmark of Shannon's information theory. Therefore, w.l.o.g., TM can take any encoded binary string as its tape input and manipulate the information in any way it wants using its random access. 
 
 Since the sets $Q, \Sigma$ are finite, each transition table $\delta$ is a finite subset of the power set of all countably finite permutation of $Q \times \Sigma \mapsto Q \times \Sigma \times \{L, R\}$, taken over all possible sets of $Q, \Sigma$. The collection of all such transition tables is simply all finite subsets in this power set, thus its cardinality is countably infinite.
 
@@ -180,6 +180,8 @@ To reiterate, the class of Turing machines is the most powerful class of machine
 
 
 
+\subsubsection{Implementing TM using NTM}
+This is equivalent to the NTM, so it is implemented without any restriction.
 
 
 
@@ -209,6 +211,42 @@ As an equivalent, more physical description, the machine is a configuration whic
 \end{enumerate}
 \end{definition}
 
+
+
+The PDA is a restricted Turing machine: it does not have random access to its tape, and thus cannot manipulate the information freely as it wants. The input part of the tape can only be read in a strict sequence from start to end. The stack of the machine is an extra memory reserve for the machine with countably infinite capacity, however it cannot be randomly accessed (otherwise we could use the stack to emulate a complete Turing machine by first copying the input tape over); only the top of the stack is accessible.
+
+
+
+
+\subsubsection{Power of the PDAs}
+
+The power of a PDA is derived from its stack $-$ a memory reserve with countably infinite capacity and very restrictive access. The PDA is also non-deterministic, thus like an NTM it computes in parallel $-$ by branching out to explore different computation history until it finds a configuration that is halting.
+
+The class of PDAs is equivalent to the class of Context Free Languages (CFL), which is strictly smaller than the class of Turing-decidable/recognizable languages. The restriction on CFLs can be seen structurally on its parse tree, or abstractly on the pumping lemma for CFLs. We know there are Turing-decidable languages that are outside of the CFLs, therefore PDAs can solve only smaller classes of problems. 
+
+
+
+
+
+
+
+\subsubsection{Implementing PDA using NTM}
+PDA has the non-determinism that is captured naturally by the NTM. At each node of a tree branch is an instance of the PDA, and we use a restricted TM to simulate it. This is done by converting the definition of a PDA into a restricted definition of a TM. The TM appends the stack to the end of the input on its tape, and moves its head back and forth to read the next input and read/write on the top of the stack.
+
+The conversion algorithm is given as follow:
+
+\algtitle{Conversion of a PDA to a restricted TM}
+Starting from an origin node $\mathcal{O}$, initialize an empty matrix for its RM,
+\begin{enumerate}
+	\item Add the index of each adjacent node (at radius 1) of $\mathcal{O}$ to a new row in RM.
+	\item Repeat for $i \in \{2,3,...,n\}$, where $n$ is the maximum radius covered:
+	
+	For each entry $p$ at column $i$, get all $n_p$ of its adjacent nodes at radius $i+1$ from $\mathcal{O}$. 
+
+	\item Duplicate the row of entry $p$ while appending to it each of the $n_p$ adjacent nodes at column $i+1$. If $n_p=0$, append $``empty"$ instead. The process is akin to a Cartesian product.
+
+	\item Return the RM for $\mathcal{O}$.
+\end{enumerate}
 
 
 
