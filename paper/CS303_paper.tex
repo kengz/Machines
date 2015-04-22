@@ -83,7 +83,7 @@ We study and implement all the machines leading up to the Turing machine: DFA, N
 \section{Introduction} \label{intro}
 
 
-This paper assumes the reader's familiarity with the theory of computation, and with core ideas such as computation history, configuration, languages and set theory. This entire project is written in ${\tt Javascript}$, and is public on GitHub at: \url{https://github.com/kengz/Machines}.
+This paper assumes the reader's familiarity with the theory of computation, and with core ideas such as computation history, configuration, languages and set theory. This entire project is written in ${\tt Javascript}$, and is public on GitHub at: \url{https://github.com/kengz/Machines}. We include sample input/output of our implementation in the appendices.
 
 The Turing Machine(TM) is the most general class of computing machine that we know of. Its power is measured by the problems it can solved, or equivalently, the languages it can decide. In the universe of languages, we can roughly classify from the most powerful to the ever strictly less powerful classes of languages as follow:
 $$\emph{Turing-recognizable} \supset \emph{Turing-decidable} \supset \emph{Context Free} \supset \emph{Regular}$$
@@ -100,15 +100,6 @@ Most reasonable variants of the Turing machine are equivalent in power, thus thi
 
 
 
-
-
-Draft:
-
-1. Turing machine, use NTM for tree. Present parts of machines. Memory.
-
-2. slowly descend the hierarchy, with more restriction on machines. changes in memory access
-
-3. describe language class and restriction by algorithm
 
 
 
@@ -338,7 +329,7 @@ Sometimes a DFA can have a redundant description, especially when it is converte
 
 
 \section{Unified Machine Definition}
-To make use of the polymorphism in our NTM implementation, we devise a common JSON format for machine definitions. It must specify the machine class and description. It will define whichever of the tuples $Q, \Sigma, \Gamma, b, \delta, q_0, F$ as present in the original machine definition. Then, a converter will parse it into a proper, equivalent NTM definition, and add the rules and missing tuples as needed. The NTM initializes with the tape inputs, computes, prints out the computation history and accept/reject as proper to the machine class.
+To make use of the polymorphism in our NTM implementation, we devise a common JSON format for machine definitions. It must specify the machine class and description. It will define whichever of the tuples $Q, \Sigma, \Gamma, b, \delta, q_0, F$ as present in the original machine definition. Then, a converter will parse it into a proper, equivalent NTM definition, and add the rules and missing tuples as needed. The NTM initializes with the tape inputs, computes, prints out the computation history and accept/reject as proper to the machine class. Refer the appendices for examples.
 
 
 
@@ -356,6 +347,830 @@ We find that all machines have the same essential parts: a state, a head, and a 
 
 \item J.E. Hopcroft, R. Motwani, and J.D. Ullman. \emph{Introduction to Automata Theory, Languages, and Computation}. Boston: Pearson/Addison Wesley, 2007. Print.
 \end{enumerate}
+
+
+
+
+
+\section{Appendices}
+We include sample input/output codes of our implementation, stored in JSON format. The syntax and context shall be self-explanatory.
+
+\subsection{Appendix A: NTM}
+
+The input NTM definition:
+\begin{verbatim}
+{
+    "class": "TM",
+    "description": "Example of non-deterministic TM from textbook",
+    "Q": ["q0", "q1", "q2"],
+    "S": [0, 1],
+    "T": ["_"],
+    "F": ["q2"],
+    "B": "_",
+    "q0": "q0",
+    "delta":
+    {
+        "q0": {
+            "0": [ ["q0", "1", "R"] ],
+            "1": [ ["q1", "0", "R"] ]
+        },
+        "q1": {
+            "0": [ ["q1", "0", "R"], ["q0", "0", "L"] ],
+            "1": [ ["q1", "1", "R"], ["q0", "1", "L"] ],
+            "_": [ ["q2", "_", "R"] ]
+        }
+    },
+    "inputs": [
+        "01",
+        "011"
+    ]
+}
+\end{verbatim}
+
+
+The output computation histories:
+\begin{verbatim}
+Constructed machine:
+------- TM -------
+Tape: 01
+Machine computing...
+
+Computation halts. 
+Printing Tree, config format:
+
+q0,0,1
+  1,q0,1
+    1,0,q1,_
+      1,0,_,q2,_
+
+Tape: 01
+Tree size: 3
+Forefront: q2
+Accepted states: q2
+TM accepts.
+======Accept.======
+
+
+Constructed machine:
+------- TM -------
+Tape: 011
+Machine computing...
+
+Computation halts. 
+Printing Tree, config format:
+
+q0,0,1,1
+  1,q0,1,1
+    1,0,q1,1
+      1,0,1,q1,_
+        1,0,1,_,q2,_
+      1,q0,0,1
+        1,1,q0,1
+
+Tape: 011
+Tree size: 6
+Forefront: q2,q0
+Accepted states: q2
+TM accepts.
+======Accept.======
+\end{verbatim}
+
+
+
+
+
+\subsection{Appendix B: TM}
+
+The input TM definition:
+\begin{verbatim}
+{
+    "class": "TM",
+    "description": "TM that accepts binary palindromes",
+    "Q": ["q1", "q2", "q3", "q4", "q5", "q6"],
+    "S": [0, 1],
+    "T": ["X", "Y", "_"],
+    "F": ["q6"],
+    "B": "_",
+    "q0": "q0",
+    "delta":
+    {
+        "q0": {
+            "0": [ ["q1", "X", "R"] ],
+            "1": [ ["q2", "Y", "R"] ],
+            "X": [ ["q6", "X", "R"] ],
+            "Y": [ ["q6", "Y", "R"] ],
+            "_": [ ["q6", "_", "R"] ]
+        },
+        "q1": {
+            "0": [ ["q1", "0", "R"] ],
+            "1": [ ["q1", "1", "R"] ],
+            "X": [ ["q3", "X", "L"] ],
+            "Y": [ ["q3", "Y", "L"] ],
+            "_": [ ["q3", "_", "L"] ]
+        },
+        "q2": {
+            "0": [ ["q2", "0", "R"] ],
+            "1": [ ["q2", "1", "R"] ],
+            "X": [ ["q4", "Y", "L"] ],
+            "Y": [ ["q4", "Y", "L"] ],
+            "_": [ ["q4", "_", "L"] ]
+        },
+        "q3": {
+            "0": [ ["q5", "X", "L"] ],
+            "X": [ ["q6", "X", "R"] ],
+            "Y": [ ["q6", "Y", "R"] ]
+        },
+        "q4": {
+            "1": [ ["q5", "Y", "L"] ],
+            "X": [ ["q6", "X", "R"] ],
+            "Y": [ ["q6", "Y", "R"] ]
+        },
+        "q5": {
+            "0": [ ["q5", "0", "L"] ],
+            "1": [ ["q5", "1", "L"] ],
+            "X": [ ["q0", "X", "R"] ],
+            "Y": [ ["q0", "Y", "R"] ]
+        }
+    },
+    "inputs": [
+        "010",
+        "011"
+    ]
+}
+\end{verbatim}
+
+
+The output computation histories:
+\begin{verbatim}
+Constructed machine:
+------- TM -------
+Tape: 010
+Machine computing...
+
+Computation halts. 
+Printing Tree, config format:
+
+q0,0,1,0
+  X,q1,1,0
+    X,1,q1,0
+      X,1,0,q1,_
+        X,1,q3,0,_
+          X,q5,1,X,_
+            q5,X,1,X,_
+              X,q0,1,X,_
+                X,Y,q2,X,_
+                  X,q4,Y,Y,_
+                    X,Y,q6,Y,_
+
+Tape: 010
+Tree size: 10
+Forefront: q6
+Accepted states: q6
+TM accepts.
+======Accept.======
+
+
+Constructed machine:
+------- TM -------
+Tape: 011
+Machine computing...
+
+Computation halts. 
+Printing Tree, config format:
+
+q0,0,1,1
+  X,q1,1,1
+    X,1,q1,1
+      X,1,1,q1,_
+        X,1,q3,1,_
+
+Tape: 011
+Tree size: 4
+Forefront: 
+Accepted states: 
+TM rejects.
+======Reject.======
+\end{verbatim}
+
+
+
+
+
+
+\subsection{Appendix C: PDA}
+
+The input PDA definition:
+\begin{verbatim}
+{
+    "class": "PDA",
+    "description": "From ex 6.1.1",
+    "Q": ["q0", "q1"],
+    "S": [0, 1],
+    "T": ["X", "Y", "Z"],
+    "F": ["q1"],
+    "Z": "Z",
+    "q0": "q0",
+    "delta":
+    {
+        "q0": {
+            "0": {
+                "Z": [ ["q1", "Z"] ],
+                "X": [ ["q0", "/"] ]
+            },
+            "1": {
+                "Z": [ ["q0", "XZ"] ],
+                "X": [ ["q0", "XX"] ]
+            }
+        },
+        "q1": {
+            "0": {
+                "Z": [ ["q1", "YZ"] ],
+                "Y": [ ["q1", "YY"] ]
+            },
+            "1": {
+                "Z": [ ["q0", "Z"] ],
+                "Y": [ ["q1", "/"] ]
+            }
+        }
+    },
+    "inputs": [
+        "001",
+        "111"
+    ]
+}
+\end{verbatim}
+
+The PDA definition converted into TM definition:
+\begin{verbatim}
+{
+    "class": "PDA",
+    "description": "From ex 6.1.1",
+    "Q": ["q0", "q1"],
+    "S": [0, 1, "/"],
+    "T": [0, 1, "/", "X", "Y", "Z", "_"],
+    "F": ["q1"],
+    "B": "_",
+    "Z": "Z",
+    "q0": "q0",
+    "delta": {
+        "q0": {
+            "0": [
+                ["q0,0", "0,.", "R"]
+            ],
+            "1": [
+                ["q0,1", "1,.", "R"]
+            ]
+        },
+        "q0,0": {
+            "0": [
+                ["q0,0", 0, "R"]
+            ],
+            "1": [
+                ["q0,0", 1, "R"]
+            ],
+            "X": [
+                ["q0,0", "X", "R"]
+            ],
+            "Y": [
+                ["q0,0", "Y", "R"]
+            ],
+            "Z": [
+                ["q0,0", "Z", "R"]
+            ],
+            "_": [
+                ["q0,0,_", "_", "L"]
+            ]
+        },
+        "q0,0,_": {
+            "Z": [
+                ["q1,0,L", "Z", "L"]
+            ],
+            "X": [
+                ["q0,0,L", "_", "L"]
+            ]
+        },
+        "q1,0,L": {
+            "0": [
+                ["q1,0,L", 0, "L"]
+            ],
+            "1": [
+                ["q1,0,L", 1, "L"]
+            ],
+            "X": [
+                ["q1,0,L", "X", "L"]
+            ],
+            "Y": [
+                ["q1,0,L", "Y", "L"]
+            ],
+            "Z": [
+                ["q1,0,L", "Z", "L"]
+            ],
+            "0,.": [
+                ["q1", "x", "R"]
+            ]
+        },
+        "q0,0,L": {
+            "0": [
+                ["q0,0,L", 0, "L"]
+            ],
+            "1": [
+                ["q0,0,L", 1, "L"]
+            ],
+            "X": [
+                ["q0,0,L", "X", "L"]
+            ],
+            "Y": [
+                ["q0,0,L", "Y", "L"]
+            ],
+            "Z": [
+                ["q0,0,L", "Z", "L"]
+            ],
+            "0,.": [
+                ["q0", "x", "R"]
+            ]
+        },
+        "q0,1": {
+            "0": [
+                ["q0,1", 0, "R"]
+            ],
+            "1": [
+                ["q0,1", 1, "R"]
+            ],
+            "X": [
+                ["q0,1", "X", "R"]
+            ],
+            "Y": [
+                ["q0,1", "Y", "R"]
+            ],
+            "Z": [
+                ["q0,1", "Z", "R"]
+            ],
+            "_": [
+                ["q0,1,_", "_", "L"]
+            ]
+        },
+        "q0,1,_": {
+            "Z": [
+                ["q0,1,_,Z", "Z", "R"]
+            ],
+            "X": [
+                ["q0,1,_,X", "X", "R"]
+            ]
+        },
+        "q0,1,_,Z": {
+            "_": [
+                ["q0,1,L", "X", "L"]
+            ]
+        },
+        "q0,1,L": {
+            "0": [
+                ["q0,1,L", 0, "L"]
+            ],
+            "1": [
+                ["q0,1,L", 1, "L"]
+            ],
+            "X": [
+                ["q0,1,L", "X", "L"]
+            ],
+            "Y": [
+                ["q0,1,L", "Y", "L"]
+            ],
+            "Z": [
+                ["q0,1,L", "Z", "L"]
+            ],
+            "1,.": [
+                ["q0", "x", "R"]
+            ]
+        },
+        "q0,1,_,X": {
+            "_": [
+                ["q0,1,L", "X", "L"]
+            ]
+        },
+        "q1": {
+            "0": [
+                ["q1,0", "0,.", "R"]
+            ],
+            "1": [
+                ["q1,1", "1,.", "R"]
+            ]
+        },
+        "q1,0": {
+            "0": [
+                ["q1,0", 0, "R"]
+            ],
+            "1": [
+                ["q1,0", 1, "R"]
+            ],
+            "X": [
+                ["q1,0", "X", "R"]
+            ],
+            "Y": [
+                ["q1,0", "Y", "R"]
+            ],
+            "Z": [
+                ["q1,0", "Z", "R"]
+            ],
+            "_": [
+                ["q1,0,_", "_", "L"]
+            ]
+        },
+        "q1,0,_": {
+            "Z": [
+                ["q1,0,_,Z", "Z", "R"]
+            ],
+            "Y": [
+                ["q1,0,_,Y", "Y", "R"]
+            ]
+        },
+        "q1,0,_,Z": {
+            "_": [
+                ["q1,0,L", "Y", "L"]
+            ]
+        },
+        "q1,0,_,Y": {
+            "_": [
+                ["q1,0,L", "Y", "L"]
+            ]
+        },
+        "q1,1": {
+            "0": [
+                ["q1,1", 0, "R"]
+            ],
+            "1": [
+                ["q1,1", 1, "R"]
+            ],
+            "X": [
+                ["q1,1", "X", "R"]
+            ],
+            "Y": [
+                ["q1,1", "Y", "R"]
+            ],
+            "Z": [
+                ["q1,1", "Z", "R"]
+            ],
+            "_": [
+                ["q1,1,_", "_", "L"]
+            ]
+        },
+        "q1,1,_": {
+            "Z": [
+                ["q0,1,L", "Z", "L"]
+            ],
+            "Y": [
+                ["q1,1,L", "_", "L"]
+            ]
+        },
+        "q1,1,L": {
+            "0": [
+                ["q1,1,L", 0, "L"]
+            ],
+            "1": [
+                ["q1,1,L", 1, "L"]
+            ],
+            "X": [
+                ["q1,1,L", "X", "L"]
+            ],
+            "Y": [
+                ["q1,1,L", "Y", "L"]
+            ],
+            "Z": [
+                ["q1,1,L", "Z", "L"]
+            ],
+            "1,.": [
+                ["q1", "x", "R"]
+            ]
+        }
+    },
+    "inputs": ["001", "111"]
+}
+\end{verbatim}
+
+
+The output computation histories, where {\tt Z} is the marker for the bottom of stack $-$ the unprocessed input is on the left, stack is toward the right, the state follows the convention of a configuration:
+
+\begin{verbatim}
+Converting PDA
+Constructed machine:
+------- PDA -------
+Tape: 001
+Machine computing...
+
+Computation halts. 
+Printing Tree, config format with stack:
+
+q0,0,0,1,Z
+  q1,0,1,Z,_
+    q1,1,Z,Y
+      q1,Z,_,_
+
+Tape: 001
+Tree size: 25
+Forefront: q1
+Accepted states: q1
+Accept via state.
+======Accept.======
+
+
+Constructed machine:
+------- PDA -------
+Tape: 111
+Machine computing...
+
+Computation halts. 
+Printing Tree, config format with stack:
+
+q0,1,1,1,Z
+  q0,1,1,Z,X
+    q0,1,Z,X,X
+      q0,Z,X,X,X
+
+Tape: 111
+Tree size: 33
+Forefront: 
+Accepted states: 
+Stop at tape end.
+======Reject.======
+\end{verbatim}
+
+
+
+
+
+
+\subsection{Appendix D: CNF}
+
+
+The input grammar definition:
+\begin{verbatim}
+{
+	"S": [ "ABC", "BaB" ],
+	"A": [ "aA", "BaC", "aaa" ],
+	"B": [ "bBb", "a", "D" ],
+	"C": [ "CA", "AC" ],
+	"D": [ "/" ]
+}
+\end{verbatim}
+
+The output Chomsky Normal Form:
+\begin{verbatim}
+{
+    "S": ["BE", "CB", "BC", "a"],
+    "B": ["DF", "a", "DD"],
+    "C": ["a"],
+    "D": ["b"],
+    "E": ["CB"],
+    "F": ["BD"]
+}
+\end{verbatim}
+
+
+
+
+
+\subsection{Appendix E: NFA}
+
+The input NFA definition:
+\begin{verbatim}
+{
+    "class": "NFA",
+    "description": "NFA N1 from Sipser eg.1.38",
+    "Q": ["a", "b", "c", "d"],
+    "S": [0, 1],
+    "F": ["d"],
+    "q0": "a",
+    "delta":
+    {
+        "a": {
+            "0": ["a"],
+            "1": ["a", "b"]
+        },
+        "b": {
+            "0": ["c"],
+            "/": ["c"]
+        },
+        "c": {
+            "1": ["d"]
+        },
+        "d": {
+            "0": ["d"],
+            "1": ["d"]
+        }
+    },
+    "inputs": [
+        "101",
+        "111"
+    ]
+}
+\end{verbatim}
+
+The output computation histories, where the arrow {\tt *>} above an output state is the consumed input leading to it:
+\begin{verbatim}
+Converting DFA/NFA
+Constructed machine:
+------- NFA -------
+Tape: 101
+Machine computing...
+
+Computation halts. 
+Printing Tree: input-symbol> & result-state
+
+a
+  1>
+  a
+    0>
+    a
+      1>
+      a
+      1>
+      b
+      />
+      c
+  1>
+  b
+    0>
+    c
+  />
+  c
+
+Tape: 101
+Tree size: 8
+Forefront: a,b,c
+Accepted states: 
+DFA/NFA rejects.
+======Reject.======
+
+
+Constructed machine:
+------- NFA -------
+Tape: 111
+Machine computing...
+
+Computation halts. 
+Printing Tree: input-symbol> & result-state
+
+a
+  1>
+  a
+    1>
+    a
+      1>
+      a
+      1>
+      b
+      />
+      c
+    1>
+    b
+    />
+    c
+      1>
+      d
+  1>
+  b
+  />
+  c
+    1>
+    d
+      1>
+      d
+
+Tape: 111
+Tree size: 12
+Forefront: a,b,c,d
+Accepted states: d
+DFA/NFA accepts.
+======Accept.======
+\end{verbatim}
+
+
+
+
+
+
+\subsection{Appendix F: DFA}
+
+The input NFA definition:
+\begin{verbatim}
+{
+    "class": "DFA",
+    "description": "DFA from ex 4.4.1",
+    "Q": ["a", "b", "c", "d", "e"],
+    "S": [0, 1],
+    "F": ["c", "e"],
+    "q0": "a",
+    "delta":
+    {
+        "a": {
+            "0": ["b"],
+            "1": ["c"]
+        },
+        "b": {
+            "0": ["c"],
+            "1": ["e"]
+        },
+        "c": {
+            "0": ["d"],
+            "1": ["c"]
+        },
+        "d": {
+            "0": ["c"],
+            "1": ["e"]
+        },
+        "e": {
+            "0": ["b"],
+            "1": ["e"]
+        }
+    },
+    "inputs": [
+        "101",
+        "000"
+    ]
+}
+\end{verbatim}
+
+
+The output computation history, where the arrow {\tt *>} above an output state is the consumed input leading to it:
+\begin{verbatim}
+Converting DFA/NFA
+Constructed machine:
+------- DFA -------
+Tape: 101
+Machine computing...
+
+Computation halts. 
+Printing Tree: input-symbol> & result-state
+
+a
+  1>
+  c
+    0>
+    d
+      1>
+      e
+
+Tape: 101
+Tree size: 3
+Forefront: e
+Accepted states: e
+DFA/NFA accepts.
+======Accept.======
+
+
+Constructed machine:
+------- DFA -------
+Tape: 000
+Machine computing...
+
+Computation halts. 
+Printing Tree: input-symbol> & result-state
+
+a
+  0>
+  b
+    0>
+    c
+      0>
+      d
+
+Tape: 000
+Tree size: 3
+Forefront: d
+Accepted states: 
+DFA/NFA rejects.
+======Reject.======
+\end{verbatim}
+
+
+
+
+
+\subsection{Appendix G: DFA Minimizer}
+
+The minimized DFA of the DFA above:
+\begin{verbatim}
+{
+    "class": "DFA",
+    "description": "DFA from ex 4.4.1",
+    "Q": ["a", "c"],
+    "S": [0, 1],
+    "F": ["c"],
+    "q0": "a",
+    "delta": {
+        "a": {
+            "0": ["a"],
+            "1": ["c"]
+        },
+        "c": {
+            "0": ["a"],
+            "1": ["c"]
+        }
+    },
+    "inputs": ["101", "000"]
+}
+\end{verbatim}
+
+
 
 
 \end{document} 
