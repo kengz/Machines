@@ -71,7 +71,7 @@ kengw{\tt @}lafayette.edu.}
 \maketitle
 
 \begin{abstract}
-We study and implement all the machines leading up to the Turing machine: DFA, NFA, PDA. To illustrate their relationship and hierarchy of powers, we emphasize the machines as subsets of the more general ones. We start with the Non-deterministic Turing Machine, and increasingly restrict its functions as we descend the hierarchy to the less powerful machines. The polymorphism allows all machines to run on the same implemented code, and stresses that Turing Machine is the most powerful of all.
+We study and implement all the machines $-$ DFA, NFA, PDA, Turing Machine. To illustrate their relationship and the hierarchy of powers, we start with the Non-deterministic Turing Machine and increasingly restrict its abilities as we descend the hierarchy to the less powerful machines. This polymorphism allows all of them to run on a single implemented code. We show that the power of a machine is derived from its use of memory, which is equivalent to its ability to manipulate information and solve problems. Finally, we conclude that Turing Machine is the most powerful machine that is physically realizable.
 \end{abstract}
 
 
@@ -83,19 +83,19 @@ We study and implement all the machines leading up to the Turing machine: DFA, N
 \section{Introduction} \label{intro}
 
 
-This paper assumes the reader's familiarity with the theory of computation, and with core ideas such as computation history, configuration, languages and set theory. This entire project is written in ${\tt Javascript}$, and is public on GitHub at: \url{https://github.com/kengz/Machines}. We include sample input/output of our implementation in the appendices.
+This paper assumes the reader's familiarity with the theory of computation, and with core ideas such as computation history, configuration, languages and set theory. This project is implemented in ${\tt Javascript}$, and is public on GitHub at: \url{https://github.com/kengz/Machines}. We include sample input/output of our implementation in the appendices.
 
-The Turing Machine(TM) is the most general class of computing machine that we know of. Its power is measured by the problems it can solved, or equivalently, the languages it can decide. In the universe of languages, we can roughly classify from the most powerful to the ever strictly less powerful classes of languages as follow:
+The Turing Machine(TM) is the most general class of computing machines that we know of. A TM's power is measured by the class of problems it can solved, or equivalently, the language it can decide. In the universe of languages, we can roughly classify from the most powerful to the strictly less powerful as follow:
 $$\emph{Turing-recognizable} \supset \emph{Turing-decidable} \supset \emph{Context Free} \supset \emph{Regular}$$
 Equivalently when expressed with machines, we get the hierarchy:
 $$\emph{TM} \supset \emph{TM (halting)} \supset \emph{PDA} \supset \emph{NFA/DFA}$$
-Furthermore, a machine is also equivalently identified with the class of problems it can solve, thereby establishing the equivalence among languages, classes of problems, and classes of machines. This insight will be useful later.
+A machine is also equivalently identified with the class of problems it can solve. Therefore, we have the equivalence a language, a machine that recognize the language, and the class of problems solved by that machine. This insight will be useful later.
 
-With this idea in mind, our project implements all these machines by starting from the most generic class $-$ the Turing machine, and progressively restricts its power as we descend the hierarchy. The aim is to illustrate the factors that affect the power of a machine and differentiate the classes. 
+With this idea in mind, our project implements all these machines by starting from the most generic class $-$ the Turing machine, and progressively restricts its power as we descend the hierarchy. The aim is to identify the source of a machine's power and to differentiate the machine classes by that mean.
 
-Implementation by restriction also allows the use of polymorphism, which in our opinion expresses the idea cleaner and more naturally.
+Implementation by restriction also allows the use of polymorphism, which in our opinion conveys our ideas and arguments more naturally.
 
-Most reasonable variants of the Turing machine are equivalent in power, thus this allows us to choose one that works best for our purpose. We choose the Non-deterministic Turing Machine(NTM) due to its tree structure that represents non-determinism more clearly than an equivalent Turing machine.
+Most reasonable variants of the Turing machine are equivalent in power. This allows us to choose one that works best for our purpose. We select the Non-deterministic Turing Machine(NTM) due to its tree structure that represents non-determinism more clearly than an equivalent Turing machine.
 
 
 
@@ -105,11 +105,11 @@ Most reasonable variants of the Turing machine are equivalent in power, thus thi
 
 \section{General Purpose Machine} \label{NTM}
 
-To simulate all the other machines, our choice of this general purpose machine is the Non-deterministic Turing Machine(NTM), which is a computation history with instances of TM configurations branching out non-deterministically from its start. 
+To simulate all the other machines, our choice of this general purpose machine is the Non-deterministic Turing Machine(NTM), which is a computation history with instances of TM configurations branching out non-deterministically from its starting configuration. 
 
-To recap, a configuration is a triple: the machine's state, its head location, and its tape content. This can encode the entirety of not only the TM, but also the subordinate machines.
+To recap, a configuration is a triple $-$ the machine's state, its head location, and its tape content. This representation can completely encode not only the TM, but also the subordinate machine classes.
 
-The NTM can be represented using a tree structure, whose node is a machine configuration, with root as the starting configuration. The tree depth of a node is the number of computation steps it is from the root: each step of computation non-deterministically expands the tree by one level down, and epsilon transitions expand the tree sideway on the same level. When expanding, the original node gets copied, and a computation step is applied to get the next configuration, which is then added to the tree.
+The NTM can be represented using a tree structure, where each node is a machine configuration, with root as the starting configuration. The tree depth of a node is the number of computation steps it is from the root $-$ each step of computation non-deterministically expands the tree by one level down, and epsilon transitions expand the tree sideway on the same level. When expanding, the original node gets copied, and a computation step is applied to get the next configuration, which is then added to the tree.
 
 For practicality, we want our machines to be halting, i.e. all problems must be decidable. The NTM decides at the first level of tree that contains a halting(accepting/rejecting) configuration. Each class of machines may have a slightly different halting configuration.
 
@@ -145,28 +145,28 @@ As an equivalent, more physical description, the machine is a configuration whic
 
 Any discrete information is quantizable, and can be encoded bijectively into a binary string $-$ this is the hallmark of Shannon's information theory. Therefore, w.l.o.g., TM can take any encoded binary string as its tape input and manipulate the information in any way it wants using its random access. 
 
-Since the sets $Q, \Sigma$ are finite, each transition table $\delta$ is a finite subset of the power set of all countably finite permutation of $Q \times \Sigma \mapsto Q \times \Sigma \times \{L, R\}$, taken over all possible sets of $Q, \Sigma$. The collection of all such transition tables is simply all finite subsets in this power set, thus its cardinality is countably infinite.
+Since the sets $Q, \Sigma$ are finite, each transition table $\delta$ is a finite subset of the power set of all countably finite permutations of $Q \times \Sigma \mapsto Q \times \Sigma \times \{L, R\}$, taken over all possible sets of $Q, \Sigma$. The collection of all such transition tables is simply all finite subsets in this power set, thus its cardinality is countably infinite, i.e. there is countably many Turing Machines. Note that if we allow the sets $Q, \Sigma$ to be infinite, this power set will have the cardinality of uncountable infinity, implying the existence of uncountable machines, which we will show is physically unrealizable.
 
-This puts the size of the Turing Machine class at countably infinite, that is, it can solve that many classes of problems/languages. However, this is insufficient to solve $\emph{all}$ classes of problems as there exists much more of them. This statement is reflected in the Godel's Incompleteness Theorems, or equivalently expressed with machines in Turing's Undecidability Theorem.
+As noted, the size of the Turing Machine class is countably infinite, that is, it can solve that many classes of problems or recognize that many languages. However, this is insufficient to solve $\emph{all}$ classes of problems in the mathematical universe as there exists much more of them. This statement is reflected in Godel's Incompleteness Theorems, or equivalently expressed with machines in Turing's Undecidability Theorem.
 
-As an interesting sidenote, the relationship above generalizes properly to quantum information theory and quantum machines. The only major addition is that the information bit used in quantum theory is a $\emph{qubit}$, which is an orthogonal Hilbert space basis that can be superpositioned. However, this does not give the quantum machines too much more power albeit its extra features, and we shall not dwell into the details.
+On an interesting sidenote, the relationship above generalizes properly to quantum information theory and quantum machines. The only major addition is that the information bit used in quantum theory is a $\emph{qubit}$, which is an orthogonal Hilbert space basis that can be superpositioned. However, this does not give the quantum machines too much more power$^{\ref{quantum}}$ albeit its extra features, and we shall not dwell into the details.
 
 
 
 
 
 \subsubsection{Power of the Class of TMs - a Quick Discourse}
-``How powerful is the class of Turing machines,'' one may ask. We argue that it is the absolute upper bound that is physically realizable. The theorems of Godel and Turing partition the set of all problems into decidable(solvable) and undecidable. The former can be solved by a Turing machine; the latter cannot be solved in any way.
+``How powerful is the class of Turing machines,'' we ask. We argue that it is the absolute upper bound that is physically realizable\footnote{By physically realizable we mean can be realized in this universe, within the limits of its physical laws.}. The theorems of Godel and Turing partition the set of all problems into decidable and undecidable. The former can be solved by a Turing machine; the latter cannot be solved in any way.
 
-Moreover, we posit that there cannot exist a physically realizable machine that is more powerful than a Turing machine. Here is why: in physics, especially in quantum theory, all observables are quantized, i.e. all measurements in the universe are discrete. Regardless of the continuum we can use to formalize physical theories, the physical reality that we can access is discrete, so we can theorize: $\emph{the continuum of the real number is not physically realizable}$.
+Moreover, we posit that there cannot exist a physically realizable machine that is more powerful than a Turing machine. Here is why: in physics, especially in quantum theory, all observables are quantized, i.e. all measurements in the universe are instrinsically discrete. Since all measurements are countable, any realizable physical system can only enumerate a countable set, not the uncountable infinity. Regardless of the continuum we can use to formalize physical theories, the physical reality that we can access is discrete, so we can theorize: $\emph{the continuum of the real number is not physically realizable}$.
 
-For a hypothetical machine to be more powerful that a Turing machine, not only it has to do the impossible by solving beyond the class of decidable problems, it will also have to transcend the countable infinity, i.e. the hypothetical machine has to be on the level of the continuum. But this is not physically realizable as we said earlier; even if it were, by quantum theory, all the observables we extract from it will still not be on the continuum.
+For a hypothetical machine to be more powerful that a Turing machine, not only it has to do the impossible by solving beyond the class of decidable problems, it will also have to transcend the countable infinity, i.e. this hypothetical machine has to be on the level of the continuum. But this is not physically realizable as we said earlier; even if it were, by quantum theory, all the observables we can extract from it will still not be on the continuum.
 
-Finally, we theorize that the human brain is not beyond, but is in the class of Turing machines. Regardless of how massive the human memory(tape) is, there is still countably finite units of it in the brain, which makes it discrete. 
+Finally, we theorize that the human brain is not beyond, but is in the class of Turing machines. Regardless of how massive the human brain (Turing machine tape) is, it is still part of the discrete physical reality and has countably finite components in it, therefore it cannot transcend the continuum as mentioned.
 
-We are still trying to understand and reconstruct the human brain with a computer, or to say, we are looking for a Turing machine that mimics our brain. This task is as daunting as searching for one rational number within the space of rational numbers, because we are looking for $\emph{one}$ Turing machine among all countably infinite Turing machine. A search by brute force is simply impossible. Nevertheless, the human brain is a Turing machine.
+Efforts are underway trying to understand and reconstruct the human brain with a computer, or to say, we are looking for a Turing machine that mimics our brain. This task is as daunting as searching for one rational number within the space of all rational numbers, because we are looking for $\emph{one}$ Turing machine among all countably infinite Turing machines. A search by brute force is simply impossible. Nevertheless, the human brain is a Turing machine.
 
-To reiterate, the class of Turing machines is the most powerful class of machines that is physically realizable, and there is nothing in our physical theories that can trancend it.
+To reiterate, the class of Turing machines is the most powerful class of machines that is physically realizable, and there is nothing within our physical theories that can trancend it.
 
 
 
@@ -198,7 +198,7 @@ As an equivalent, more physical description, the machine is a configuration whic
 \begin{enumerate}
 	\item a state,
 	\item a countably infinite tape which serves as its memory, with the stack concatenated to the end of the input,
-	\item a head that can only read the input portion in sequence, and read and write on the stack portion.
+	\item a head that can only read the input portion in sequence, and read and write on the end of the stack portion.
 \end{enumerate}
 \end{definition}
 
@@ -211,15 +211,15 @@ The PDA is a restricted Turing machine: it does not have random access to its ta
 
 \subsubsection{Power of the PDAs}
 
-The power of a PDA is derived from its stack $-$ a memory reserve with countably infinite capacity and very restrictive access. The PDA is also non-deterministic, thus like an NTM it computes in parallel $-$ by branching out to explore different computation history until it finds a configuration that is halting.
+The power of a PDA is derived from its stack $-$ a memory reserve with countably infinite capacity and very restrictive access. The PDA is also non-deterministic, thus like an NTM it computes in parallel $-$ by branching out to explore different computation histories until it finds a configuration that is halting.
 
-The class of PDAs is equivalent to the class of Context Free Languages (CFL), which is strictly smaller than the class of Turing-decidable/recognizable languages. The restriction on CFLs can be seen structurally on its parse tree, or abstractly on the pumping lemma for CFLs. We know there are Turing-decidable languages that are outside of the CFLs, therefore PDAs can solve only smaller classes of problems. 
+The class of PDAs is equivalent to the class of Context Free Languages (CFL), which is strictly smaller than the class of Turing-decidable/recognizable languages. The restriction on CFLs can be seen structurally from its parse tree, or abstractly from the pumping lemma for CFLs. We know there are Turing-decidable languages that are outside of the CFLs, therefore PDAs can solve only smaller classes of problems. 
 
 
 
 
 \subsubsection{Implementing PDA using NTM}
-PDA has the non-determinism that is captured naturally by the NTM. At each node of a tree branch is an instance of the PDA, and we use a restricted TM to simulate it. This is done by converting the definition of a PDA into a restricted definition of a TM. The TM appends the stack to the end of the input on its tape, and moves its head back and forth to read the next input and read/write on the top of the stack:
+PDA has the non-determinism that is captured naturally by the NTM. At each node of a tree branch is an instance of the PDA, and we use a restricted TM to simulate it. This is done by converting the definition of a PDA into the definition of a restricted TM. The TM appends the stack to the end of the input on its tape, and moves its head back and forth to read the next input and read/write at the top of the stack:
 
 \algtitle{Conversion of a PDA to a restricted TM}
 Given a PDA, all its definitions correspond directly to the definition of a TM, except for the transition table, which we illustrate here. For every PDA rule in the form of instantaneous description $\delta(q_1, a, \alpha) = (q_2, \beta)$, add to TM the rules:
@@ -241,7 +241,7 @@ Given a PDA, all its definitions correspond directly to the definition of a TM, 
 
 
 \subsubsection{Chomsky Normal Form}
-The Chomsky Normal Form(CNF) for a CFG is useful for various proofs as it bounds the size of the parse tree and converts the grammar into a nice representation. We implement a CNF algorithm as a proof of concept, the algorithm as a such:
+The Chomsky Normal Form(CNF) for a CFG is useful for various proofs as it bounds the size of the parse tree and converts the grammar into a nice representation. We implement a CNF algorithm as a proof of concept, the algorithm is a such:
 
 \algtitle{CNF algorithm}
 Given a grammar $G$,
@@ -258,7 +258,7 @@ There is a deterministic variant of the PDAs called DPDA that is less powerful. 
 
 The DPDA is less powerful due to it lacking the non-deterministic structure. It cannot explore different possibilities of computation history in parallel, and this imposes an even stronger restriction on the use of its stack memory $-$ it can only be popped and pushed in a single way for a given instance of DPDA. 
 
-A more elegant interpretation is this: we can view a DPDA as a single thread in the whole tree of PDA which starts from the same root but ends in a different leaf of the tree. Therefore, a PDA is just a collection of multiple parallel instances of DPDA; a DPDA is an instance in the whole tree of PDA. Whereas a PDA accepts whenever one of its leaves accepts, a DPDA as a single thread will only accept if its single leaf accepts. 
+A more elegant interpretation is this: we can view a DPDA as a single thread in the whole tree of PDA which starts from the same root but ends in a different leaf of the tree. Therefore, a PDA is just a collection of multiple parallel instances of DPDA; a DPDA is an instance in the whole tree of PDA. Whereas a PDA accepts whenever one of its leaves accepts, a DPDA as a single thread will only accept if its only leaf accepts. 
 
 However, bear in mind that the presence of memory stack is crucial to setting DPDA and PDA apart, because when we remove the stack, we will restore equivalence between the deterministic and non-deterministic variants of a machine, as we shall see below.
 
@@ -268,9 +268,9 @@ However, bear in mind that the presence of memory stack is crucial to setting DP
 
 NFA and DFA have a similar tree-and-thread relationship: NFA is the whole tree, DFA is a single thread. Despite that, in contrast to PDA and NPDA, DFA and NFA are equivalent. The explanation is as follow:
 
-DFA can simulate an NFA by gradually tracing out all of its possible thread, because a DFA a reversible. It consists only of an immutable input tape, and its head moves in a single direction, while its state transition is completely determined by its transition table. Say a DFA traverses down a path in the tree, it can go back up deterministically by taking the inverse of its $\delta$ transition function, which is invertible. This allows a DFA to traverse and thus simulate an NFA tree reliably without loss of information.
+DFA can simulate an NFA by gradually tracing out all of its possible threads, because a DFA is reversible. It consists only of an immutable input tape, and its head moves in a single direction, while its state transition is completely determined by its transition table. Say a DFA traverses down a path in the tree, it can go back up deterministically by taking the inverse of its $\delta$ transition function, which is invertible. This allows a DFA to traverse and thus simulate an NFA tree without loss of information.
 
-However, this equivalence does not apply for DPDA and PDA, because the computation for DPDA is not invertible. A DPDA cannot go back up its thread to traverse the other part of the PDA tree because there will be a loss of information when it cannot know whether it has previously pushed a stack symbol, or what it has popped. This makes a computation for PDA irreversible, and causes the DPDA to be less powerful.
+However, this equivalence does not apply for DPDA and PDA, because the computation for DPDA is not invertible. A DPDA cannot go back up its thread to traverse the other part of the PDA tree because there will be a loss of information when it cannot know whether it has previously pushed a stack symbol, or what it has popped. This makes a PDA computation irreversible, and causes the DPDA to be less powerful.
 
 The equivalence is restored for TM and NTM because the machines have full access to its memory. With some care they can prevent information loss and make computation reversible. This is reflected in the proof of equivalence between TM and NTM.
 
@@ -301,7 +301,7 @@ Given its definition, DFA is the most restrictive type of machine. It can only r
 
 
 \subsubsection{Implementing DFA/NFA using NTM}
-NFA has the non-determinism that is captured naturally by the NTM. At each node of a tree branch is an instance of the DFA, and we use a restricted TM to simulate it. This is done by converting the definition of a DFA/NFA into a restricted definition of a TM. The TM only reads and input and moves right until the end. We give an algorithm based on NFA, but it obviously works for DFA too:
+NFA has the non-determinism that is captured naturally by the NTM. At each node of a tree branch is an instance of the DFA, and we use a restricted TM to simulate it. This is done by converting the definition of a DFA/NFA into the definition of a restricted TM. The TM only reads and input and moves right until the end. We give an algorithm based on NFA, but it obviously works for DFA too:
 
 \algtitle{Conversion of a NFA to a restricted TM}
 Given a NFA, all its definitions correspond directly to the definition of a TM, except for the transition table. For every NFA rule $\delta(q_1, a) = q_2$, add to TM the rule:
@@ -312,7 +312,7 @@ Given a NFA, all its definitions correspond directly to the definition of a TM, 
 
 
 \subsubsection{DFA minimizer}
-Sometimes a DFA can have a redundant description, especially when it is converted from a NFA. We implement a DFA minimizer using the algorithm for the Table of Distinguishabilities:
+Sometimes a DFA can have a redundant definition, especially when it is converted from a NFA. We implement a DFA minimizer using the algorithm for the Table of Distinguishabilities:
 
 \algtitle{Table of Distinguishabilities}
 \begin{enumerate}
@@ -329,14 +329,14 @@ Sometimes a DFA can have a redundant description, especially when it is converte
 
 
 \section{Unified Machine Definition}
-To make use of the polymorphism in our NTM implementation, we devise a common JSON format for machine definitions. It must specify the machine class and description. It will define whichever of the tuples $Q, \Sigma, \Gamma, b, \delta, q_0, F$ as present in the original machine definition. Then, a converter will parse it into a proper, equivalent NTM definition, and add the rules and missing tuples as needed. The NTM initializes with the tape inputs, computes, prints out the computation history and accept/reject as proper to the machine class. Refer the appendices for examples.
+To make use of the polymorphism in our NTM implementation, we devise a common JSON format for machine definitions. It must specify the machine class and description. It will define whichever of the tuples $Q, \Sigma, \Gamma, b, \delta, q_0, F$ as present in the original machine definition. Then, a converter will parse it into a proper, equivalent NTM definition, and add the rules and missing tuples as needed. The NTM initializes with the tape inputs, computes, prints out the computation history and accepts/rejects as proper to the machine class. Refer the appendices for examples.
 
 
 
 \section{Conclusion}
 We have implemented all machines using one polymorphic code based on the Non-deterministic Turing Machine. We view other machines as gradual restrictions of the NTM, and uncover the reasons behind the disparities in their computing power. 
 
-We find that all machines have the same essential parts: a state, a head, and a tape. The real difference is their access to memory, or equivalently, their ability to manipulate information. The most powerful class can freely manipulate information, where as we slowly restrict this ability, the machine becomes less powerful. Finally, we conclude that a machine's theoretical computing power is derived directly from its ability to freely manipulate memory/information. The absolute upper bound of this power limit that is physically realizable is the class of Turing machines, whose class of decidable problems also coincides with the class of all solvable problems in the Godel sense.
+We find that all machines have the same essential parts: a state, a head, and a tape. The real difference is their access to memory, or equivalently, their ability to manipulate information. The most powerful class can freely manipulate information, where as we slowly restrict this ability, the machine becomes less powerful. Finally, we conclude that a machine's theoretical computing power is derived directly from its ability to manipulate memory/information. The absolute upper bound of this power limit that is physically realizable is the class of Turing machines, whose class of decidable problems also coincides with the class of all solvable problems in the Godel sense.
 
 
 
@@ -346,6 +346,8 @@ We find that all machines have the same essential parts: a state, a head, and a 
 \item M. Sipser, \emph{Introduction to the Theory of Computation}. Boston, MA: Cengage Learning, 2013. Print.
 
 \item J.E. Hopcroft, R. Motwani, and J.D. Ullman. \emph{Introduction to Automata Theory, Languages, and Computation}. Boston: Pearson/Addison Wesley, 2007. Print.
+
+\item D. Deutsch, \emph{Quantum theory, the Church-Turing principle and the universal quantum computer}. Proceedings of the Royal Society of London A 400, pp. 97-117(1985). \label{quantum}
 \end{enumerate}
 
 

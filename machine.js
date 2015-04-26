@@ -11,7 +11,7 @@ var _ = require("underscore");
 // For DFA minimization algorithm:
 // var rawdefM = require('./definitions/DFA_4_18.json');
 // var rawdefM = require('./definitions/DFA_4_21.json');
-// var rawdefM = require('./definitions/DFA_4_4_1.json');
+var rawdefM = require('./definitions/DFA_4_4_1.json');
 // var rawdefM = require('./definitions/DFA_4_4_2.json');
 // var rawdefM = require('./definitions/DFA_3_2_1.json');
 // var rawdefM = require('./definitions/DFA_3_2_2.json');
@@ -24,7 +24,7 @@ var _ = require("underscore");
 
 // var rawdefM = require('./definitions/TM_0power.json');
 // var rawdefM = require('./definitions/TM_repeat.json');
-var rawdefM = require('./definitions/TM_nondeter.json');
+// var rawdefM = require('./definitions/TM_nondeter.json');
 // var rawdefM = require('./definitions/TM_palindrome.json');
 
 // var rawdefM = require('./definitions/PDA_6_1_1.json');
